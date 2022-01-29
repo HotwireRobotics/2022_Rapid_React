@@ -101,10 +101,13 @@ public class Robot extends TimedRobot {
 
 	// Motors
 	public TalonSRX intakeSeven = new TalonSRX(5);
+	public TalonSRX ShooterLeft = new TalonSRX(50);
+	public TalonSRX ShooterRight = new TalonSRX(4); // 51
+	public TalonSRX preShooter = new TalonSRX(9);
 
 	public TalonSRX MotorSeven = new TalonSRX(30);
 	public TalonSRX MotorEight = new TalonSRX(31);
-	public TalonSRX ColorTwo = new TalonSRX(2);
+	public TalonSRX ActIndexer = new TalonSRX(2);
 
 	boolean limitPressed;
 
@@ -115,7 +118,6 @@ public class Robot extends TimedRobot {
 	enum AutoChoice {
 		// Left, Right
 	}
-
 
 	public DriverStation driverStation;
 	public RobotState currentState;
@@ -131,7 +133,7 @@ public class Robot extends TimedRobot {
 		shooter.Init();
 
 		// SmartDashboard.putNumber("AutoMode", 0);
-		indexer.indexerFive.set(ControlMode.PercentOutput, 0.0f);
+		// indexer.indexerFive.set(ControlMode.PercentOutput, 0.0f);
 
 		SmartDashboard.putNumber(autoSelectKey, 0);
 	}
@@ -170,31 +172,30 @@ public class Robot extends TimedRobot {
 		// System.out.println(driveTrain.GetEncoder());
 
 		shooter.Update();
-		shooter.UpdatePID();
 
-	/*
-		// autonomous loop
-		System.out.println("Current auto step " + currentAutoStep);
-		if (currentAutoStep < autonomousSelected.size()) {
-
-			autonomousSelected.get(currentAutoStep).Update();
-
-			if (autonomousSelected.get(currentAutoStep).autoIndex) {
-				indexer.RunAutomatic(true);
-			}
-
-			if (autonomousSelected.get(currentAutoStep).isDone) {
-				currentAutoStep = currentAutoStep + 1;
-				if (currentAutoStep < autonomousSelected.size()) {
-					autonomousSelected.get(currentAutoStep).Begin();
-				}
-			}
-		} else {
-			// System.out.println("Autonomous Done");
-			driveTrain.SetBothSpeed(0.0f);
-			// currentState = RobotState.Teleop;
-		}
-		*/
+		/*
+		 * // autonomous loop
+		 * System.out.println("Current auto step " + currentAutoStep);
+		 * if (currentAutoStep < autonomousSelected.size()) {
+		 * 
+		 * autonomousSelected.get(currentAutoStep).Update();
+		 * 
+		 * if (autonomousSelected.get(currentAutoStep).autoIndex) {
+		 * indexer.RunAutomatic(true);
+		 * }
+		 * 
+		 * if (autonomousSelected.get(currentAutoStep).isDone) {
+		 * currentAutoStep = currentAutoStep + 1;
+		 * if (currentAutoStep < autonomousSelected.size()) {
+		 * autonomousSelected.get(currentAutoStep).Begin();
+		 * }
+		 * }
+		 * } else {
+		 * // System.out.println("Autonomous Done");
+		 * driveTrain.SetBothSpeed(0.0f);
+		 * // currentState = RobotState.Teleop;
+		 * }
+		 */
 		UpdateMotors();
 	}
 
@@ -220,6 +221,7 @@ public class Robot extends TimedRobot {
 
 	// Drive Scale
 	boolean slow = false;
+
 	public float DriveScaleSelector(float ControllerInput, DriveScale selection) {
 
 		float multiplier = (ControllerInput / (float) Math.abs(ControllerInput));
@@ -234,7 +236,7 @@ public class Robot extends TimedRobot {
 			if (slow) {
 				output = output * 0.5f;
 			}
-			
+
 			return output;
 		} else if (selection == DriveScale.tangent) {
 			return multiplier * (0.4f * (float) Math.tan(1.8 * (multiplier * ControllerInput) - .9) + 0.5f);
@@ -250,13 +252,12 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
+
 		driveTrain.SendData();
 		SmartDashboard.putBoolean("RobotEnabled", true);
 
-		shooter.Update();
-
 		// Intake 2=B, 4=Y
-		double intakeSpeed = 0.8f;
+		double intakeSpeed = 0.75f;
 		if (operator.getRawButton(2)) {
 			intakeSeven.set(ControlMode.PercentOutput, intakeSpeed);
 			SmartDashboard.putNumber("intakeMotor", intakeSpeed);
@@ -279,39 +280,70 @@ public class Robot extends TimedRobot {
 			}
 		}
 
-		// Shooter 5=Left Bumper
-		shooter.rpmTarget = SmartDashboard.getNumber(shooter.shooterRPMKey, shooter.shooterRPMTarget);
+		// TODO
+		// Shooter 6=Right Bumper
+		// shooter.rpmTarget = SmartDashboard.getNumber(shooter.shooterRPMKey,
+		// shooter.shooterRPMTarget);
+		// double shooterspeed;
+
+		// if (operator.getRawButton(6)){
+		// shooterspeed = ((flightStickLeft.getRawAxis(2)-1)/2);
+		// System.out.println(((flightStickLeft.getRawAxis(2)-1)/2));
+		// } else {
+		// shooterspeed = 0.5;
+		// }
+
+		// System.out.println(shooterspeed);
+		// ShooterLeft.set(ControlMode.PercentOutput, shooterspeed);
+		// ShooterRight.set(ControlMode.PercentOutput, -shooterspeed);
+
+		// Indexer 5=Left Bumper
+		if (operator.getRawButton(6)) {
+			ActIndexer.set(ControlMode.PercentOutput, -0.8f);
+			System.out.println("run");
+		} else {
+			ActIndexer.set(ControlMode.PercentOutput, 0.0);
+		}
+
 		if (operator.getRawButton(5)) {
-			//shooter.rpmTarget = 2990;
-					//Original: 3900
-					// 2 (Sweet spot) 2990
-					// 1 (Farthest): 2830
+			preShooter.set(ControlMode.PercentOutput, -0.5f); // Close:0.8 //0.3
+			shooter.rpmTarget = 2500;
 
-				
-			if (flightStickRight.getRawButton(6)){
+			// shooter.rpmTarget = 2990;
 
-				shooter.rpmTarget = 2877; //2830 //2870
-			
-			} else if (flightStickRight.getRawButton(7)){
-			
-				shooter.rpmTarget = 2990;
-			
-			} else if (flightStickRight.getRawButton(10)){
-			
-				shooter.rpmTarget = 3900;
-			
+			if (flightStickLeft.getRawButton(6)) {
+
+				// shooter.rpmTarget = 500; // close:2000 //2750
+
+			} else if (flightStickRight.getRawButton(7)) {
+
+				// shooter.rpmTarget = 2990;
+
+			} else if (flightStickRight.getRawButton(10)) {
+
+				// shooter.rpmTarget = 3900;
+
 			} else {
 
-				shooter.rpmTarget = 3900;
-			} 
+				// shooter.rpmTarget = 3000;
 
+			}
 
 			// SmartDashboard.putNumber(shooter.shooterRPMKey, 5700);
-			limelight.SetLight(true);
+			// limelight.SetLight(true);
+		} else {
+			shooter.rpmTarget = 0;
+			preShooter.set(ControlMode.PercentOutput, 0.0f);
 		}
-		
-		shooter.UpdatePID();
-		
+
+		if (shooter.rpmTarget > 0.0) {
+			System.out.println("rpm targ ");
+			shooter.Update();
+		} else {
+			ShooterLeft.set(ControlMode.PercentOutput, 0);
+			ShooterRight.set(ControlMode.PercentOutput, 0);
+		}
+
 		// Climber
 		// Button9=LeftJoystickClick
 		// Button10=RightJoystickClick
@@ -333,22 +365,31 @@ public class Robot extends TimedRobot {
 			climber.climbMotors(0.0f);
 		}
 
-		// Lime Light
-		if (flightStickLeft.getRawButton(6) || (flightStickLeft.getRawButton(7))) {
-			if (flightStickLeft.getRawButton(6)) {
-				limelight.Position(driveTrain, 1, 0);
-			} else {
-				limelight.Position(driveTrain, -1, 0);
-			}
-			driveTrain.SetBreak();
-		} else {
-			if (!operator.getRawButton(6)) {
-				driveTrain.SetCoast();
-			}
-			ControllerDrive();
-		}
-
+		ControllerDrive();
 		UpdateMotors();
+	}
+
+	public void teleopPeriodic_() {
+
+		/*
+		 * 
+		 * // Lime Light
+		 * if (flightStickLeft.getRawButton(6) || (flightStickLeft.getRawButton(7))) {
+		 * if (flightStickLeft.getRawButton(6)) {
+		 * limelight.Position(driveTrain, 1, 0);
+		 * } else {
+		 * limelight.Position(driveTrain, -1, 0);
+		 * }
+		 * driveTrain.SetBreak();
+		 * } else {
+		 * if (!operator.getRawButton(6)) {
+		 * driveTrain.SetCoast();
+		 * }
+		 * ControllerDrive();
+		 * }
+		 * 
+		 */
+
 	}
 
 	public void testInit() {
@@ -380,8 +421,16 @@ public class Robot extends TimedRobot {
 	}
 
 	public void testPeriodic() {
-		System.out.println(SmartDashboard.getNumber("autoMode", 0));
+
+		driveTrain.SetRightSpeed(0.0f);
+		driveTrain.SetLeftSpeed(0.0f);
+		double shooterspeed = -0.5;
+		// shooterspeed = -((flightStickLeft.getRawAxis(2)-1)/2);
+		System.out.println(shooterspeed);
+		ShooterLeft.set(ControlMode.PercentOutput, shooterspeed);
+		ShooterRight.set(ControlMode.PercentOutput, -shooterspeed);
 		limelight.SetLight(true);
+		UpdateMotors();
 	}
 
 	public void ControllerDrive() {
@@ -399,9 +448,11 @@ public class Robot extends TimedRobot {
 			// tank
 			float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.linear);
 			float rightJoystick = DriveScaleSelector((float) flightStickRight.getRawAxis(1), DriveScale.linear);
+			System.out.println(leftJoystick + "Running");
 			driveTrain.SetRightSpeed(-rightJoystick);
 			driveTrain.SetLeftSpeed(-leftJoystick);
 			// driveTrain.SetCoast();
+
 		}
 	}
 

@@ -7,14 +7,14 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Shooter {
 
-    public TalonSRX shooterTwo = new TalonSRX(51);
+    public TalonSRX shooterTwo = new TalonSRX(4);  //51
     public TalonSRX shooterFive = new TalonSRX(50);
     
     public Limelight limelight;
 
-    public double shooterP = 0.001;
+    public double shooterP = 0.0001;
     public double shooterI = 0.0005;
-    public double shooterD = 0.0001;
+    public double shooterD = 0.000;
     public double shooterRPMTarget;
 
     public boolean didHitSpeed = true;
@@ -44,10 +44,10 @@ public class Shooter {
     }
 
     public void Update() {
-        rpmCurrent = TalonVelocityToRPM((float)shooterTwo.getSelectedSensorVelocity(), 1.0f);
-    }
 
-    public void UpdatePID() {
+
+        rpmCurrent = TalonVelocityToRPM((float)shooterTwo.getSelectedSensorVelocity());
+
         // Shooter code pid
         SmartDashboard.putNumber("Shooter_RPM", rpmCurrent);
 
@@ -79,11 +79,11 @@ public class Shooter {
     }
 
     public void PowerManual(float power) {
-        shooterFive.set(ControlMode.PercentOutput, power * -1);
-        shooterTwo.set(ControlMode.PercentOutput, power);
+        shooterFive.set(ControlMode.PercentOutput, power);
+        shooterTwo.set(ControlMode.PercentOutput, power * -1);
     }
 
-    public float TalonVelocityToRPM(float ticks, float gearBoxReduction) {
+    public float TalonVelocityToRPM(float ticks) {
         float rpm = ((ticks / 2048) * 600);
         return Math.abs(rpm);
     }
