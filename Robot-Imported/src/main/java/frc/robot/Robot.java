@@ -325,14 +325,21 @@ public class Robot extends TimedRobot {
 		}
 		*/
 
-		if (operator.getRawButton(5)) {
-			preShooter.set(ControlMode.PercentOutput, -0.5f); // Close:0.8 //0.3
-			shooter.rpmTarget = 2500;
+		int shootButton = 5;
+		if (operator.getRawButtonPressed(shootButton)) {
+			shooter.shooterPid.reset();
+		}
+		if (operator.getRawButton(shootButton)) {
+			preShooter.set(ControlMode.PercentOutput, -0.7f); // Close:0.8 //0.3
+			shooter.rpmTarget = 2150;
 
 			ballCount = 0;
 			firstInitialTrigger = false;
-			if (operator.getRawAxis(indexerAxis) > 0.5f) {
+			System.out.println("upto " + shooter.UpToSpeed(0.05f));
+			if (operator.getRawAxis(indexerAxis) > 0.5f && shooter.UpToSpeed(0.05f)) {
 				indexerTargetSpeed = indexSpeed;
+			} else {
+				indexerTargetSpeed = 0;
 			}
 
 		} else {

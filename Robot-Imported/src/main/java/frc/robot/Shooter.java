@@ -13,7 +13,7 @@ public class Shooter {
     public Limelight limelight;
 
     public double shooterP = 0.0001;
-    public double shooterI = 0.0005;
+    public double shooterI = 0.0004;
     public double shooterD = 0.000;
     public double shooterRPMTarget;
 
@@ -24,7 +24,7 @@ public class Shooter {
     String shooterDKey = "Shooter_D";
     String shooterRPMKey = "Shooter_RPMTarget";
 
-    PIDController shooterPid = new PIDController(shooterP, shooterI, shooterD);
+    public PIDController shooterPid = new PIDController(shooterP, shooterI, shooterD);
 
     public double rpmTarget = 0;
 
@@ -41,6 +41,7 @@ public class Shooter {
         SmartDashboard.putNumber(shooterRPMKey, shooterRPMTarget);
 
         shooterPid = new PIDController(shooterP, shooterI, shooterD);
+
     }
 
     public void Update() {
