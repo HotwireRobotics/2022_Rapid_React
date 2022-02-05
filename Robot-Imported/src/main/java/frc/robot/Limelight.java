@@ -6,36 +6,31 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.robot.DriveTrain;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
 
-    float inverted = 1;
+    private float targetBuffer = 3;
 
-    public float turnBuffer;
+    public double p = 0.025;
+    public double i = 0.000;
+    public double d = 0.001;
 
-    private Timer timer = new Timer();
+    String pKey = "limelight_P";
+    String iKey = "limelight_I";
+    String dKey = "limelight_D";
 
-    // max is when the robot is far from the goal, min is when we're near the goal
-    public float maxSpeed;
-    public float minSpeed;
-
-    public float xAdjust;
+    public PIDController pid = new PIDController(p, i, d);
 
     public Limelight() {
-        timer.reset();
-        timer.start();
+
     }
 
-    public void AutoSettings() {
-        turnBuffer = 0.55f;
-        maxSpeed = 0.25f;
-        minSpeed = 0.15f;
-    }
-
-    public void TeleopSettings() {
-        turnBuffer = 0.2f;  //0.7  //0.4
-        maxSpeed = 0.4f;
-        minSpeed = 0.25f;  //0.15
+    public void Init() {
+        SmartDashboard.putNumber(pKey, p);
+        SmartDashboard.putNumber(iKey, i);
+        SmartDashboard.putNumber(dKey, d);
     }
 
     public void SetLight(boolean turnOn) {
@@ -68,103 +63,39 @@ public class Limelight {
         // Make sure we have valid targets first
         if (tv.getDouble(0.0f) > 0) {
 
-            double x = tx.getDouble(0.0) + xAdjust;
-            double y = ty.getDouble(0.0);
-            double area = ta.getDouble(0.0);
-
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
-
-            if (x * inverted > turnBuffer) {
-                return false;
-            } else if (x * inverted < -turnBuffer) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
+            double x = Math.abs(tx.getDouble(0.0));
+            return x < targetBuffer;
         }
+
         return true;
     }
 
-    public boolean Position(DriveTrain driveTrain, float inverted, double xAdj) {
+    public void Position(DriveTrain driveTrain) {
 
-        this.xAdjust = (float)xAdj;
+        if (OnTarget()) {
+            driveTrain.SetBothSpeed(0.0f);
+            return;
+        }
 
-        SetLight(true);
-        driveTrain.SetBreak();
+        // get data from smart dashboard
+        p = SmartDashboard.getNumber(pKey, p);
+        i = SmartDashboard.getNumber(iKey, i);
+        d = SmartDashboard.getNumber(dKey, d);
 
-        // Flip xadjust for easier tuning. Set xadjust negative to aim rigt, positive to
-        // aim left.
-        xAdjust = xAdjust * -1;
+        // give data to pid class
+        pid.setP(p);
+        pid.setI(i);
+        pid.setD(d);
 
+        // get current error
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
         NetworkTableEntry tx = table.getEntry("tx");
-        NetworkTableEntry ty = table.getEntry("ty");
-        NetworkTableEntry ta = table.getEntry("ta");
-        NetworkTableEntry tv = table.getEntry("tv");
 
-        // Make sure we have valid targets first
-        if (tv.getDouble(0.0f) > 0) {
+        // calculate 
+        float pidOut = (float)pid.calculate(tx.getDouble(0.0), 0);
 
-            double x = tx.getDouble(0.0) + xAdjust;
-            double y = ty.getDouble(0.0);
-            double area = ta.getDouble(0.0);
-
-            NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
-
-            float maxArea = 3.4f;
-            float minArea = 0.26f;
-            float currentAreaPercentage = ((float) area - minArea) / (maxArea - minArea);
-
-            // float currentSpeed = Lerp(minSpeed, maxSpeed, currentAreaPercentage);
-            float minspeed = 0.1f;
-            float p = 0.04f;
-            float currentSpeed = (float) Math.abs(x) * p; 
-            if (currentSpeed < minspeed) {
-                currentSpeed = minspeed;
-            }
-            float turnSpeedSlow = -currentSpeed * 0.25f;
-
-            if (x * inverted > turnBuffer) {
-
-                driveTrain.SetLeftSpeed(currentSpeed * inverted);
-                driveTrain.SetRightSpeed(turnSpeedSlow * inverted);
-
-                timer.reset();
-                timer.start();
-
-            } else if (x * inverted < -turnBuffer) {
-
-                driveTrain.SetLeftSpeed(turnSpeedSlow * inverted);
-                driveTrain.SetRightSpeed(currentSpeed * inverted);
-
-                timer.reset();
-                timer.start();
-            } else {
-
-                driveTrain.SetLeftSpeed(0.0f);
-                driveTrain.SetRightSpeed(0.0f);
-
-                if (timer.get() > 0.1) {
-                    return true;
-                }
-            }
-        } else {
-            driveTrain.SetBothSpeed(0.0f);
-        }
-
-        return false;
-    }
-
-    public float Lerp(float v0, float v1, float t) {
-
-        if (t < 0) {
-            t = 0;
-
-        } else if (t > 1) {
-            t = 1;
-        }
-
-        return (v0 + t * (v1 - v0));
+        // use to reduce error
+        driveTrain.SetLeftSpeed(-pidOut);
+        driveTrain.SetRightSpeed(pidOut);
     }
 }

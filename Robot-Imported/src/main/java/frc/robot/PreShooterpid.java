@@ -40,7 +40,6 @@ public class PreShooterpid {
         SmartDashboard.putNumber(preshooterRPMKey, preshooterRPMTarget);
 
         preshooterPid = new PIDController(preshooterP, preshooterI, preshooterD);
-
     }
 
     public void Update() {

@@ -137,6 +137,7 @@ public class Robot extends TimedRobot {
 
 	public void robotInit() {
 		limelight.SetLight(false);
+		limelight.Init();
 		shooter.Init();
 		preshooterpid.Init();
 		SmartDashboard.putNumber(autoSelectKey, 0);
@@ -161,7 +162,6 @@ public class Robot extends TimedRobot {
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(1);
 		// autonomousSelected = SmartDashboard.getNumber("/SmartDashboard/autoMode", 0);
 
-		limelight.AutoSettings();
 		driveTrain.SetBreak();
 		limelight.SetLight(true);
 
@@ -208,7 +208,6 @@ public class Robot extends TimedRobot {
 
 		ballCount = 0;
 
-		limelight.TeleopSettings();
 		limelight.SetLight(false);
 
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
@@ -294,7 +293,6 @@ public class Robot extends TimedRobot {
 		int indexerAxis = 2;
 
 		//System.out.println(firstBeam.get() + " - " + secondBeam.get());
-		System.out.println(ballCount);
 
 		// beam false when broken
 		if (operator.getRawAxis(indexerAxis) > 0.5f) {
@@ -394,31 +392,17 @@ public class Robot extends TimedRobot {
 			climber.climbMotors(0.0f);
 		}
 
-		ControllerDrive();
+		// Lime Light
+		if (flightStickLeft.getRawButton(6)) {
+			limelight.Position(driveTrain);
+			System.out.println(limelight.OnTarget()); 
+			driveTrain.SetBreak();
+		} else {
+		 	driveTrain.SetCoast();
+		 	ControllerDrive();
+		}
+
 		UpdateMotors();
-	}
-
-	public void teleopPeriodic_() {
-
-		/*
-		 * 
-		 * // Lime Light
-		 * if (flightStickLeft.getRawButton(6) || (flightStickLeft.getRawButton(7))) {
-		 * if (flightStickLeft.getRawButton(6)) {
-		 * limelight.Position(driveTrain, 1, 0);
-		 * } else {
-		 * limelight.Position(driveTrain, -1, 0);
-		 * }
-		 * driveTrain.SetBreak();
-		 * } else {
-		 * if (!operator.getRawButton(6)) {
-		 * driveTrain.SetCoast();
-		 * }
-		 * ControllerDrive();
-		 * }
-		 * 
-		 */
-
 	}
 
 	public void testInit() {
