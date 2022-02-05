@@ -17,8 +17,8 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Climber {
 
-    //public TalonSRX climberOne = new TalonSRX(49);
-    //public TalonSRX climberTwo = new TalonSRX(52);
+    public TalonSRX climberOne = new TalonSRX(49);
+    public TalonSRX climberTwo = new TalonSRX(53);
     public DoubleSolenoid lockDoubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
 
     public float changeDelay = 0.2f;
@@ -26,13 +26,13 @@ public class Climber {
     public Timer pancakeDelay = new Timer();
 
     public void coastMode(){
-		//climberOne.setNeutralMode(NeutralMode.Coast);
-		//climberTwo.setNeutralMode(NeutralMode.Coast);
+		climberOne.setNeutralMode(NeutralMode.Coast);
+		climberTwo.setNeutralMode(NeutralMode.Coast);
     }
 
     public void brakeMode(){
-		//climberOne.setNeutralMode(NeutralMode.Brake);
-        //climberTwo.setNeutralMode(NeutralMode.Brake);
+		climberOne.setNeutralMode(NeutralMode.Brake);
+        climberTwo.setNeutralMode(NeutralMode.Brake);
     }
 
     public void unlock() {
@@ -49,6 +49,8 @@ public class Climber {
     }
 
     public void climbMotors(float climbSpeed) {
+        climberOne.set(ControlMode.PercentOutput, climbSpeed);
+        climberTwo.set(ControlMode.PercentOutput, -climbSpeed);
         brakeMode();
 
     }
