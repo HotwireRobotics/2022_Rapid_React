@@ -1,8 +1,12 @@
 package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
+import edu.wpi.first.wpilibj.motorcontrol.VictorSP;
+import com.ctre.phoenix.motorcontrol.*;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class DriveTrain {
 	JoshMotorControllor joshmotorcontrollorLeftBottomOne;
@@ -17,6 +21,13 @@ public class DriveTrain {
 		joshmotorcontrollorLeftBottomTwo = new JoshMotorControllor(pwm2, lerpSpeed);
 		joshmotorcontrollorRightBottomOne = new JoshMotorControllor(pwm3, lerpSpeed);
 		joshmotorcontrollorRightBottomTwo = new JoshMotorControllor(pwm4, lerpSpeed);
+		int limit = 80;
+		int threshold = 80;
+		float time = 0.001f;
+		joshmotorcontrollorLeftBottomOne.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
+		joshmotorcontrollorLeftBottomTwo.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
+		joshmotorcontrollorRightBottomOne.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
+		joshmotorcontrollorRightBottomTwo.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
 
 		this.navx = navx;
 	}

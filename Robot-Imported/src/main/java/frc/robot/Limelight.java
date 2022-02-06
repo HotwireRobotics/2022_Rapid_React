@@ -52,6 +52,12 @@ public class Limelight {
 
         return 0.0;
     }
+    
+    public double gety() {
+        NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+        NetworkTableEntry ty = table.getEntry("ty");
+        return ty.getDouble(0.0);
+    }
 
     public boolean OnTarget() {
         NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");

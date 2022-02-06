@@ -327,22 +327,34 @@ public class Robot extends TimedRobot {
 		} else {
 		}
 		*/
-		
+		System.out.println("beam1 " + firstBeam + "beam2 " + secondBeam);
 		int shootButton = 5;
 		if (operator.getRawButtonPressed(shootButton)) {
 			shooter.shooterPid.reset();
 			preshooterpid.preshooterPid.reset();
-			preShooterFive.set(ControlMode.PercentOutput, 0.5f);
+			// preShooterFive.set(ControlMode.PercentOutput, 0.5f);
 			//TODO might be fault
 		}
 		if (operator.getRawButton(shootButton)) {
-			shooter.rpmTarget = 2150;
-			preshooterpid.preRpmTarget = 3000;
+			if (limelight.gety() >= 0) {
+				shooter.rpmTarget = 2150;
+				preshooterpid.preRpmTarget = 3000;
+			}else if(limelight.gety() > -11.5){
+				shooter.rpmTarget = 2300;
+				preshooterpid.preRpmTarget = 2500;
+			}else{
+				shooter.rpmTarget = 2700;
+				preshooterpid.preRpmTarget = 2222;
+			}
+
 
 			ballCount = 0;
 			firstInitialTrigger = false;
-			System.out.println("upto " + shooter.UpToSpeed(0.05f));
-			if (operator.getRawAxis(indexerAxis) > 0.5f && shooter.UpToSpeed(0.05f)) {
+			float buffer = 0.05f;
+			if (operator.getRawAxis(indexerAxis) > 0.5f && 
+				shooter.UpToSpeed(buffer) && 
+				preshooterpid.UpToSpeed(buffer)
+			) {
 				indexerTargetSpeed = -0.5f;
 			} else {
 				indexerTargetSpeed = 0;
@@ -365,10 +377,8 @@ public class Robot extends TimedRobot {
 
 		if (preshooterpid.preRpmTarget > 0.0) {
 			preshooterpid.Update();
-			System.out.println("ran");
 		} else {
 			preShooterFive.set(ControlMode.PercentOutput, 0);
-		
 		}
 
 		// Climber
@@ -395,7 +405,6 @@ public class Robot extends TimedRobot {
 		// Lime Light
 		if (flightStickLeft.getRawButton(6)) {
 			limelight.Position(driveTrain);
-			System.out.println(limelight.OnTarget()); 
 			driveTrain.SetBreak();
 		} else {
 		 	driveTrain.SetCoast();

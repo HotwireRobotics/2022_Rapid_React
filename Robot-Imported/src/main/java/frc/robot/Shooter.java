@@ -41,7 +41,6 @@ public class Shooter {
         SmartDashboard.putNumber(shooterRPMKey, shooterRPMTarget);
 
         shooterPid = new PIDController(shooterP, shooterI, shooterD);
-
     }
 
     public void Update() {

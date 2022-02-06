@@ -13,7 +13,7 @@ public class PreShooterpid {
 
     public double preshooterP = 0.0001;
     public double preshooterI = 0.0004;
-    public double preshooterD = 0.000;
+    public double preshooterD = 0.00001;
     public double preshooterRPMTarget;
 
     public boolean didHitSpeed = true;
@@ -68,9 +68,10 @@ public class PreShooterpid {
         if (motorSpeed >= max) {
             motorSpeed = max;
         }
+
         // System.out.println("Speed " + motorSpeed + " RPM " + rpm);
-        SmartDashboard.putNumber("PreShooter_Speed", motorSpeed);
-        PowerManual((float) motorSpeed);
+        SmartDashboard.putNumber("PreShooter_Speed", -motorSpeed);
+        PowerManual((float) -motorSpeed);
     }
 
     public boolean UpToSpeed(float RPMBuffer) {
