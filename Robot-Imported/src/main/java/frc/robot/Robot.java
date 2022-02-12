@@ -76,9 +76,6 @@ public class Robot extends TimedRobot {
 	public float encoderSpeed2 = 0;
 	// public Encoder shooterEncoder = new Encoder();
 
-    public DigitalInput firstBeam = new DigitalInput(1);
-    public DigitalInput secondBeam = new DigitalInput(0);
-
 	// Drivetrain
 	public DriveTrain driveTrain = new DriveTrain(54, 55, 56, 57, navx);
 
@@ -96,8 +93,8 @@ public class Robot extends TimedRobot {
 	public Joystick flightStickRight;
 
 	public Limelight limelight = new Limelight();
-	public Shooter shooter = new Shooter(limelight);
 	public PreShooterpid preshooterpid = new PreShooterpid(limelight);
+	public Shooter shooter = new Shooter(limelight, preshooterpid);
 	public Climber climber = new Climber();
 
 	// Motors
@@ -109,11 +106,10 @@ public class Robot extends TimedRobot {
 
 	public TalonSRX MotorSeven = new TalonSRX(30);
 	public TalonSRX MotorEight = new TalonSRX(31);
-	public TalonSRX indexer = new TalonSRX(2);
+
+	public Indexer indexer = new Indexer(shooter, preshooterpid);
 
 	boolean limitPressed;
-
-	public int ballCount = 0;
 
 	public enum DriveScale {
 		linear, parabala, tangent, inverse, cb, cbrt,
@@ -126,16 +122,17 @@ public class Robot extends TimedRobot {
 	public DriverStation driverStation;
 	public RobotState currentState;
 
-	public boolean firstInitialTrigger = false;
-	public boolean secondInitialTrigger = false;
-
 	// Auto
 	public LinkedList<AutoStep> autonomousSelected;
+	public LinkedList<AutoStep> autoFourBall;
+	public int currentAutoStep = 0;
+
 	// start on the line, backup, and shoot
 
 	public String autoSelectKey = "autoMode";
 
 	public void robotInit() {
+		CameraServer.startAutomaticCapture();
 		limelight.SetLight(false);
 		limelight.Init();
 		shooter.Init();
@@ -158,15 +155,29 @@ public class Robot extends TimedRobot {
 	}
 
 	public void autonomousInit() {
-
+		currentAutoStep = 0;
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(1);
-		// autonomousSelected = SmartDashboard.getNumber("/SmartDashboard/autoMode", 0);
 
 		driveTrain.SetBreak();
 		limelight.SetLight(true);
 
+		autoFourBall = new LinkedList<AutoStep>();
+		autoFourBall.add(new NavxReset(navx));
+		autoFourBall.add(new IntakeDrop(intakeSolenoid));
+		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		// pickup first ball
+		autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
+		// autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
+		// move forward towards goal
+		autoFourBall.add(new EncoderForward(driveTrain, 45000, 0.2f));
+		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		// shoot
+		autoFourBall.add(new Shoot(shooter, indexer));
+		// autoFourball.add(new)
+
 		double autoChoice = SmartDashboard.getNumber(autoSelectKey, 0);
 
+		autonomousSelected = autoFourBall;
 		autonomousSelected.get(0).Begin();
 	}
 
@@ -178,36 +189,36 @@ public class Robot extends TimedRobot {
 		shooter.Update();
 		preshooterpid.Update();
 
-		/*
-		 * // autonomous loop
-		 * System.out.println("Current auto step " + currentAutoStep);
-		 * if (currentAutoStep < autonomousSelected.size()) {
-		 * 
-		 * autonomousSelected.get(currentAutoStep).Update();
-		 * 
-		 * if (autonomousSelected.get(currentAutoStep).autoIndex) {
-		 * indexer.RunAutomatic(true);
-		 * }
-		 * 
-		 * if (autonomousSelected.get(currentAutoStep).isDone) {
-		 * currentAutoStep = currentAutoStep + 1;
-		 * if (currentAutoStep < autonomousSelected.size()) {
-		 * autonomousSelected.get(currentAutoStep).Begin();
-		 * }
-		 * }
-		 * } else {
-		 * // System.out.println("Autonomous Done");
-		 * driveTrain.SetBothSpeed(0.0f);
-		 * // currentState = RobotState.Teleop;
-		 * }
-		 */
+		// autonomous loop
+		System.out.println("Current auto step " + currentAutoStep);
+		if (currentAutoStep < autonomousSelected.size()) {
+
+			autonomousSelected.get(currentAutoStep).Update();
+
+			if (autonomousSelected.get(currentAutoStep).autoIndex) {
+				indexer.RunAutomatic();
+			}
+			if (autonomousSelected.get(currentAutoStep).runShooter) {
+				shooter.Update();
+			}
+
+			if (autonomousSelected.get(currentAutoStep).isDone) {
+				currentAutoStep = currentAutoStep + 1;
+				if (currentAutoStep < autonomousSelected.size()) {
+					autonomousSelected.get(currentAutoStep).Begin();
+				}
+			}
+		} else {
+			// System.out.println("Autonomous Done");
+			driveTrain.SetBothSpeed(0.0f);
+			// currentState = RobotState.Teleop;
+		}
+
 		UpdateMotors();
 	}
 
 	public void teleopInit() {
-
-		ballCount = 0;
-
+		navx.reset();
 		limelight.SetLight(false);
 
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
@@ -259,7 +270,9 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
-
+		System.out.println(navx.getYaw()+ " yaw");
+		System.out.println(navx.getPitch()+ " pitch");
+		System.out.println(navx.getRoll()+ " roll");
 		driveTrain.SendData();
 		SmartDashboard.putBoolean("RobotEnabled", true);
 
@@ -288,97 +301,41 @@ public class Robot extends TimedRobot {
 		}
 
 		// Indexer 5=Left Bumper
-		float indexSpeed = -0.2f;
-		float indexerTargetSpeed = 0;
 		int indexerAxis = 2;
 
-		//System.out.println(firstBeam.get() + " - " + secondBeam.get());
+		// System.out.println(firstBeam.get() + " - " + secondBeam.get());
 
-		// beam false when broken
-		if (operator.getRawAxis(indexerAxis) > 0.5f) {
-			if (ballCount == 0) {
-
-				if (!firstBeam.get()) {
-					firstInitialTrigger = true;
-				}
-
-				if (firstInitialTrigger && firstBeam.get()) {
-					ballCount = 1;
-				}
-
-				indexerTargetSpeed = indexSpeed;
-
-			}
-
-			if (ballCount == 1) {
-
-				if (!firstBeam.get() && secondBeam.get()) {
-					indexerTargetSpeed = -0.4f;
-				}
-
-			}
-		}
-
-		/*
-		if (operator.getRawAxis(2) > 0.5f && firstBeam.get()) {
-			indexer.set(ControlMode.PercentOutput, indexerSpeed);
-		} else if (operator.getRawAxis(3) > 0.5f && secondBeam.get()) {
-			indexer.set(ControlMode.PercentOutput, indexerSpeed);
-		} else {
-		}
-		*/
-		System.out.println("beam1 " + firstBeam + "beam2 " + secondBeam);
+		// System.out.println("beam1 " + firstBeam + "beam2 " + secondBeam);
 		int shootButton = 5;
 		if (operator.getRawButtonPressed(shootButton)) {
 			shooter.shooterPid.reset();
 			preshooterpid.preshooterPid.reset();
 			// preShooterFive.set(ControlMode.PercentOutput, 0.5f);
-			//TODO might be fault
+			// TODO might be fault
 		}
+
 		if (operator.getRawButton(shootButton)) {
-			if (limelight.gety() >= 0) {
-				shooter.rpmTarget = 2150;
-				preshooterpid.preRpmTarget = 3000;
-			}else if(limelight.gety() > -11.5){
-				shooter.rpmTarget = 2300;
-				preshooterpid.preRpmTarget = 2500;
-			}else{
-				shooter.rpmTarget = 2700;
-				preshooterpid.preRpmTarget = 2222;
-			}
 
-
-			ballCount = 0;
-			firstInitialTrigger = false;
-			float buffer = 0.05f;
-			if (operator.getRawAxis(indexerAxis) > 0.5f && 
-				shooter.UpToSpeed(buffer) && 
-				preshooterpid.UpToSpeed(buffer)
-			) {
-				indexerTargetSpeed = -0.5f;
-			} else {
-				indexerTargetSpeed = 0;
-			}
-
-		} else {
-			preshooterpid.preRpmTarget = 0;
-			shooter.rpmTarget = 0;
-		}
-
-		indexer.set(ControlMode.PercentOutput, indexerTargetSpeed);
-
-
-		if (shooter.rpmTarget > 0.0) {
 			shooter.Update();
-		} else {
-			ShooterLeft.set(ControlMode.PercentOutput, 0);
-			ShooterRight.set(ControlMode.PercentOutput, 0);
-		}
 
-		if (preshooterpid.preRpmTarget > 0.0) {
-			preshooterpid.Update();
+			// get target distance from limelight
+			// run indexer
+			float buffer = 0.05f;
+			float speed = -0.5f;
+
+			if (operator.getRawAxis(indexerAxis) > 0.5f) {
+				indexer.RunManualForward(speed, buffer);
+			}
+
 		} else {
-			preShooterFive.set(ControlMode.PercentOutput, 0);
+			preshooterpid.PowerManual(0);
+			shooter.PowerManual(0);
+
+			if (operator.getRawAxis(indexerAxis) > 0.5f) {
+				indexer.RunAutomatic();
+			} else {
+				indexer.RunManualForward(0, 0);
+			}
 		}
 
 		// Climber
@@ -403,12 +360,12 @@ public class Robot extends TimedRobot {
 		}
 
 		// Lime Light
-		if (flightStickLeft.getRawButton(6)) {
+		if (flightStickLeft.getRawButton(6) || driver.getRawButton(6)) {
 			limelight.Position(driveTrain);
 			driveTrain.SetBreak();
 		} else {
-		 	driveTrain.SetCoast();
-		 	ControllerDrive();
+			driveTrain.SetCoast();
+			ControllerDrive();
 		}
 
 		UpdateMotors();
@@ -447,15 +404,24 @@ public class Robot extends TimedRobot {
 		climber.coastMode();
 		forTesting.set(ControlMode.PercentOutput, 0.5f);
 
-		
-		driveTrain.SetRightSpeed(0.0f);
-		driveTrain.SetLeftSpeed(0.0f);
+		if (flightStickRight.getRawButton(1)) {
+			driveTrain.SetRightSpeed(0.5f);
+			driveTrain.SetLeftSpeed(-0.5f);
+		} else if (flightStickLeft.getRawButton(1)) {
+			driveTrain.SetRightSpeed(-0.5f);
+			driveTrain.SetLeftSpeed(0.5f);
+		} else {
+			driveTrain.SetRightSpeed(0.0f);
+			driveTrain.SetLeftSpeed(0.0f);
+		}
+
 		double shooterspeed = -0.0;
 		// shooterspeed = -((flightStickLeft.getRawAxis(2)-1)/2);
 		System.out.println(shooterspeed);
-		//ShooterLeft.set(ControlMode.PercentOutput, shooterspeed);
+		// ShooterLeft.set(ControlMode.PercentOutput, shooterspeed);
 		ShooterRight.set(ControlMode.PercentOutput, -shooterspeed);
 		limelight.SetLight(true);
+
 		UpdateMotors();
 	}
 
@@ -463,8 +429,11 @@ public class Robot extends TimedRobot {
 		if (arcadeDrive) {
 
 			// Arcade
-			float horJoystick = TranslateController((float) driver.getRawAxis(4));
-			float verJoystick = TranslateController((float) driver.getRawAxis(1));
+			// float horJoystick = TranslateController((float) driver.getRawAxis(2));
+			// float verJoystick = TranslateController((float) driver.getRawAxis(1));
+
+			float horJoystick = DriveScaleSelector((float) driver.getRawAxis(2), DriveScale.cb);
+			float verJoystick = DriveScaleSelector((float) driver.getRawAxis(1), DriveScale.cb);
 
 			driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
 			driveTrain.SetLeftSpeed(-verJoystick + horJoystick);

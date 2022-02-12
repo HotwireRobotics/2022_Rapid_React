@@ -11,6 +11,7 @@ public class Shooter {
     public TalonSRX shooterFive = new TalonSRX(50);
     
     public Limelight limelight;
+    public PreShooterpid preshooterpid;
 
     public double shooterP = 0.0001;
     public double shooterI = 0.0004;
@@ -30,8 +31,9 @@ public class Shooter {
 
     public float rpmCurrent = 0;
 
-    public Shooter(Limelight limelight) {
+    public Shooter(Limelight limelight, PreShooterpid preshooterpid) {
         this.limelight = limelight;
+        this.preshooterpid = preshooterpid;
     } 
 
     public void Init() {
@@ -45,6 +47,17 @@ public class Shooter {
 
     public void Update() {
 
+        if (limelight.gety() >= 0) {
+            rpmTarget = 2150;
+            preshooterpid.preRpmTarget = 3000;
+        } else if (limelight.gety() > -11.5) {
+            rpmTarget = 2300;
+            preshooterpid.preRpmTarget = 2500;
+        } else {
+            rpmTarget = 2700;
+            preshooterpid.preRpmTarget = 2222;
+        }
+        preshooterpid.Update();
 
         rpmCurrent = TalonVelocityToRPM((float)shooterTwo.getSelectedSensorVelocity());
 
@@ -70,7 +83,11 @@ public class Shooter {
         }
         // System.out.println("Speed " + motorSpeed + " RPM " + rpm);
         SmartDashboard.putNumber("Shooter_Speed", motorSpeed);
-        PowerManual((float) motorSpeed);
+        if (rpmTarget == 0.0) {
+            PowerManual(0);
+        } else {
+            PowerManual((float) motorSpeed);
+        }
     }
 
     public boolean UpToSpeed(float RPMBuffer) {

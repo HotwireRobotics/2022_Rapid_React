@@ -16,6 +16,7 @@ public abstract class AutoStep {
     public boolean isDone;
 
     public boolean autoIndex = true;
+    public boolean runShooter = false;
 
     public AutoStep()
     {

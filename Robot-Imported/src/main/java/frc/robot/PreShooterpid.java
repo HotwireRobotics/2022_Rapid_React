@@ -71,7 +71,12 @@ public class PreShooterpid {
 
         // System.out.println("Speed " + motorSpeed + " RPM " + rpm);
         SmartDashboard.putNumber("PreShooter_Speed", -motorSpeed);
-        PowerManual((float) -motorSpeed);
+        if (preRpmTarget == 0.0) {
+            PowerManual(0);
+        }else{
+            PowerManual((float) -motorSpeed);
+        }
+   
     }
 
     public boolean UpToSpeed(float RPMBuffer) {

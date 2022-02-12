@@ -26,6 +26,9 @@ public class LimelightTrack extends AutoStep {
     }
 
     public void Update() {
+
+        runShooter = true;
+
         limelight.Position(driveTrain);
         if (limelight.OnTarget()){
           isDone = true;

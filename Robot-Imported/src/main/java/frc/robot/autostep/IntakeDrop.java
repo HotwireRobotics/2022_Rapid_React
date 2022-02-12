@@ -19,7 +19,7 @@ public DoubleSolenoid intakeSolenoid;
 
     public void Begin() {     
 		SmartDashboard.putBoolean("intakeExtended", true);
-		intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+		intakeSolenoid.set(DoubleSolenoid.Value.kForward);
     }
 
     public void Update() {

@@ -3,170 +3,62 @@ package frc.robot;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Timer;
-
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-
 import javax.lang.model.util.ElementScanner6;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Indexer {
 
-    public DigitalInput beamBreakOne = new DigitalInput(3); // 3
-    public DigitalInput beamBreakTop = new DigitalInput(1); // 1
-
-    boolean beamBreakClear = true;
-    int ballCounter = 0;
-    boolean shooterStarted = false;
-    int loopCount = 0;
-
-    public boolean manualFloorBelt = true;
-
-    public TalonSRX indexerFive = new TalonSRX(9);
-    public TalonSRX floorBeltEight = new TalonSRX(1);
-
-    // public double indexerSpeed = 0.4f;
-
-    public boolean firstAutomatic = false;
-    public boolean firstClear = true;
+	public int ballCount = 0;
+    
+	public boolean firstInitialTrigger = false;
+    
+    public DigitalInput firstBeam = new DigitalInput(1);
+    public DigitalInput secondBeam = new DigitalInput(0);
+        
+    public TalonSRX indexerMotor = new TalonSRX(2);
 
     private Shooter shooter;
-    double ticksStart = 0;
-    private double ticksTarget;
+    private PreShooterpid preShooter;
 
-    private Timer fiveBallTimer = new Timer();
-    private boolean initBallFive = true;
-
-    public Indexer(Shooter shooter) {
+    public Indexer(Shooter shooter, PreShooterpid preShooter) {
         this.shooter = shooter;
-        firstAutomatic = true;
+        this.preShooter = preShooter;
     }
 
     public void RunManualForward(float speed, float RPMBuffer) {
-        ballCounter = 0;
-        loopCount = 0;
-        shooterStarted = false;
-        firstAutomatic = true;
-        initBallFive = true;
+        ballCount = 0;
 
-        // DebugPrint();
-
-        // ball - false
-        // no ball - true
-        //System.out.println(" SHOOTER " + shooter.UpToSpeed(RPMBuffer) + " - BEAM " + beamBreakTop.get());
-        if (shooter.UpToSpeed(RPMBuffer) || beamBreakTop.get()) {
-            //System.out.println("MOVING");
-            indexerFive.set(ControlMode.PercentOutput, -speed);
-            // floorBeltEight.set(ControlMode.PercentOutput, speed * 0.5f);
+        if (shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer)) {
+            indexerMotor.set(ControlMode.PercentOutput, speed);
         } else {
-            //System.out.println("STOPING");
-            indexerFive.set(ControlMode.PercentOutput, 0.0f);
-            // floorBeltEight.set(ControlMode.PercentOutput, 0.0f);
-        }
-
-        if (beamBreakOne.get()) {
-            floorBeltEight.set(ControlMode.PercentOutput, speed);
-        } else {
-            floorBeltEight.set(ControlMode.PercentOutput, 0.0f);
+            indexerMotor.set(ControlMode.PercentOutput, 0);
         }
     }
 
-    public void RunAutomatic(boolean runFloorbelt) {
+    public void RunAutomatic() {
 
-        double floorBeltSpeed = 1.0f;
+        float targetSpeed = 0;
 
-        // DebugPrint();
+        if (ballCount == 0) {
+            if (!firstBeam.get()) {
+                firstInitialTrigger = true;
+            }
 
-        if (!runFloorbelt) {
-            floorBeltEight.set(ControlMode.PercentOutput, 0.0f);
+            if (firstInitialTrigger && firstBeam.get()) {
+                ballCount = 1;
+            }
+
+            targetSpeed = -0.2f;
         }
 
-        // Stop the indexer the first time we start automatic control
-        if (firstAutomatic) {
-            firstAutomatic = false;
-            indexerFive.set(ControlMode.PercentOutput, 0.0f);
-            if (runFloorbelt) {
-                floorBeltEight.set(ControlMode.PercentOutput, floorBeltSpeed);
+        if (ballCount == 1) {
+            if (!firstBeam.get() && secondBeam.get()) {
+                targetSpeed = -0.4f;
             }
-            ticksTarget = indexerFive.getSelectedSensorPosition();
         }
-
-        if (beamBreakOne.get()) {
-            firstClear = true;
-        }
-
-        if (firstClear && !beamBreakOne.get()) {
-            ballCounter++;
-            firstClear = false;
-            ticksTarget = indexerFive.getSelectedSensorPosition() + 110000;
-        }
-
-        //System.out.println("ballcounter " + ballCounter);
-
-        if (ballCounter <= 4) {
-
-            double buffer = 5000;  //2000
-            double distance = Math.abs(indexerFive.getSelectedSensorPosition() - ticksTarget);
-            double pValue = 0.000014f;// 0.000012f
-
-            if (ballCounter == 1) {
-                pValue = pValue * 0.9f;
-            }
-
-            if (ballCounter == 4) {
-                pValue = pValue * 1.1;
-            }
-
-            double speed = distance * pValue;
-            speed = MathUtil.clamp(speed, 0.4f, 1.0f);
-
-            double floorBackSpeed = -0.2f;
-            //System.out.println("speed of index " + speed);
-            if (indexerFive.getSelectedSensorPosition() > (ticksTarget + buffer)) {
-                indexerFive.set(ControlMode.PercentOutput, speed);
-                if (runFloorbelt) {
-                    floorBeltEight.set(ControlMode.PercentOutput, floorBackSpeed);
-                }
-            } else if (indexerFive.getSelectedSensorPosition() < (ticksTarget - buffer)) {
-                indexerFive.set(ControlMode.PercentOutput, -speed);
-                if (runFloorbelt) {
-                    floorBeltEight.set(ControlMode.PercentOutput, floorBackSpeed);
-                }
-            } else {
-                //System.out.println("hit target");
-                indexerFive.set(ControlMode.PercentOutput, 0.0f);
-                if (runFloorbelt) {
-                    floorBeltEight.set(ControlMode.PercentOutput, floorBeltSpeed);
-                }
-            }
-
-            /*
-             * if (Math.abs(indexerFive.getSelectedSensorPosition() - ticksStart) <
-             * ticksToMove) { indexerFive.set(ControlMode.PercentOutput, -indexerSpeed);
-             * floorBeltEight.set(ControlMode.PercentOutput, 0.0f); } else {
-             * indexerFive.set(ControlMode.PercentOutput, 0.0f);
-             * floorBeltEight.set(ControlMode.PercentOutput, floorBeltSpeed); }
-             */
-
-        } else if (ballCounter == 5) {
-
-            if (initBallFive) {
-                initBallFive = false;
-                fiveBallTimer.reset();
-                fiveBallTimer.start();
-            }
-
-            if (fiveBallTimer.get() < 0.1f) {
-                indexerFive.set(ControlMode.PercentOutput, -0.3f);
-                floorBeltEight.set(ControlMode.PercentOutput, 0.0f);
-            } else {
-                indexerFive.set(ControlMode.PercentOutput, 0.0f);
-                floorBeltEight.set(ControlMode.PercentOutput, 0.0f);
-            }
-        } else {
-            indexerFive.set(ControlMode.PercentOutput, 0.0f);
-            floorBeltEight.set(ControlMode.PercentOutput, 0.0f);
-        }
+        System.out.println(targetSpeed+ " target speed");
+        indexerMotor.set(ControlMode.PercentOutput, targetSpeed);
     }
 
     public void DebugPrint() {
