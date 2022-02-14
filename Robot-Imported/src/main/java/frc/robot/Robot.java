@@ -167,13 +167,14 @@ public class Robot extends TimedRobot {
 		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
 		// pickup first ball
 		autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
-		// autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
 		// move forward towards goal
-		autoFourBall.add(new EncoderForward(driveTrain, 45000, 0.2f));
+		autoFourBall.add(new EncoderForward(driveTrain, 55000, 0.2f));
 		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		// shoot
 		autoFourBall.add(new Shoot(shooter, indexer));
-		// autoFourball.add(new)
+		autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
+		autoFourBall.add(new NavxTurn(driveTrain, navx, 45, 0.3f, 5));
+
 
 		double autoChoice = SmartDashboard.getNumber(autoSelectKey, 0);
 
