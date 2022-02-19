@@ -168,13 +168,27 @@ public class Robot extends TimedRobot {
 		// pickup first ball
 		autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
 		// move forward towards goal
-		autoFourBall.add(new EncoderForward(driveTrain, 55000, 0.2f));
+		autoFourBall.add(new EncoderForward(driveTrain, 52000, 0.35f)); //55000 .2
+		autoFourBall.add(new NavxTurn(driveTrain, navx, 10, 0.3f, 2.5f));
+		autoFourBall.add(new EncoderForward(driveTrain, 5000, 0.2f));
+		//autoFourBall.add(new Wait(driveTrain, 0.5f));
+		autoFourBall.add(new Shoot(shooter, indexer));
+		autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
+		autoFourBall.add(new NavxTurn(driveTrain, navx, 72, 0.3f, 2.5f));
+		autoFourBall.add(new Wait(driveTrain, 0.5f));
+		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		autoFourBall.add(new EncoderForward(driveTrain, 150000, -0.5f));
+
+		/*
 		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		// shoot
 		autoFourBall.add(new Shoot(shooter, indexer));
 		autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
-		autoFourBall.add(new NavxTurn(driveTrain, navx, 45, 0.3f, 5));
-
+		autoFourBall.add(new NavxTurn(driveTrain, navx, 72, 0.3f, 5));
+		autoFourBall.add(new Wait(driveTrain, 0.5f));
+		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		autoFourBall.add(new EncoderForward(driveTrain, 150000, -0.5f));
+		*/
 
 		double autoChoice = SmartDashboard.getNumber(autoSelectKey, 0);
 
