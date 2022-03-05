@@ -59,7 +59,7 @@ public class PreShooterpid {
         preshooterPid.setI(preshooterI);
         preshooterPid.setD(preshooterD);
         
-        System.out.println("current - " + preRpmCurrent + " set " + preRpmTarget);
+        //System.out.println("current - " + preRpmCurrent + " set " + preRpmTarget);
         double motorSpeed = preshooterPid.calculate(preRpmCurrent, preRpmTarget);
 
         if (motorSpeed < 0) {

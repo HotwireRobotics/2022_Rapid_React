@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
 	// public TalonSRX forTesting = new TalonSRX(51);
 	public TalonSRX intakeSeven = new TalonSRX(2);
 	public TalonSRX ShooterLeft = new TalonSRX(50);
-	public TalonSRX ShooterRight = new TalonSRX(6); 
+	public TalonSRX ShooterRight = new TalonSRX(6);
 	public TalonSRX preShooterFive = new TalonSRX(4);
 
 	public TalonSRX MotorSeven = new TalonSRX(30);
@@ -165,31 +165,31 @@ public class Robot extends TimedRobot {
 
 		driveTrain.SetBreak();
 		limelight.SetLight(true);
-		//TODO
+		// TODO
 		/*
-		autoFourBall = new LinkedList<AutoStep>();
-		autoFourBall.add(new NavxReset(navx));
-		autoFourBall.add(new IntakeDrop(intakeSolenoid));
-		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
-		// pickup first ball
-		autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
-		// move forward towards goal
-		autoFourBall.add(new EncoderForward(driveTrain, 52000, 0.35f)); // 55000 .2
-		*/
-		//TODO
+		 * autoFourBall = new LinkedList<AutoStep>();
+		 * autoFourBall.add(new NavxReset(navx));
+		 * autoFourBall.add(new IntakeDrop(intakeSolenoid));
+		 * autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		 * // pickup first ball
+		 * autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
+		 * // move forward towards goal
+		 * autoFourBall.add(new EncoderForward(driveTrain, 52000, 0.35f)); // 55000 .2
+		 */
+		// TODO
 		autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
-		//TODO
+		// TODO
 		/*
-		autoFourBall.add(new EncoderForward(driveTrain, 5000, 0.2f));
-		// autoFourBall.add(new Wait(driveTrain, 0.5f));
-		autoFourBall.add(new Shoot(shooter, indexer));
-		autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
-		autoFourBall.add(new NavxTurn(driveTrain, navx, 72, 0.3f, 2.5f));
-		autoFourBall.add(new Wait(driveTrain, 0.5f));
-		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
-		autoFourBall.add(new EncoderForward(driveTrain, 150000, -0.5f));
-		*/
-		//TODO
+		 * autoFourBall.add(new EncoderForward(driveTrain, 5000, 0.2f));
+		 * // autoFourBall.add(new Wait(driveTrain, 0.5f));
+		 * autoFourBall.add(new Shoot(shooter, indexer));
+		 * autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
+		 * autoFourBall.add(new NavxTurn(driveTrain, navx, 72, 0.3f, 2.5f));
+		 * autoFourBall.add(new Wait(driveTrain, 0.5f));
+		 * autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		 * autoFourBall.add(new EncoderForward(driveTrain, 150000, -0.5f));
+		 */
+		// TODO
 
 		/*
 		 * autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
@@ -347,8 +347,8 @@ public class Robot extends TimedRobot {
 
 			// get target distance from limelight
 			// run indexer
-			float buffer = 0.05f;
-			float speed = -0.5f;
+			float buffer = 0.04f;
+			float speed = -0.3f;
 
 			if (operator.getRawButton(7)) {
 				indexer.RunManualForward(speed, buffer);
@@ -369,36 +369,34 @@ public class Robot extends TimedRobot {
 		// Button11=LeftJoystickClick
 		// Button12=RightJoystickClick
 		int pov = operator.getPOV();
-		System.out.println(pov + "pov");
 
-		
-		if (pov != -1){
-		if (280 < pov || pov < 80) {
-			climber.brakeMode();
-			climber.climbMotors(-0.5f);
-		} else if (100 < pov && pov < 260) {
-			climber.climbMotors(0.5f);
-		}
-		}else{
-		climber.climbMotors(0.0f);
-		}
-	
-		if (operator.getRawButton(10)) {
-			climber.Tilt();
-		}
-		/*
-		if (operator.getRawButton(11)) {
-			climber.climbMotors(0.5f);
-		} else if (operator.getRawButton(12)) {
-			climber.brakeMode();
-			climber.climbMotors(-0.5f);
+		if (pov != -1) {
+			if (280 < pov || pov < 80) {
+				climber.climbMotors(0.5f);
+			} else if (100 < pov && pov < 260) {
+				climber.brakeMode();
+				climber.climbMotors(-0.5f);
+			}
 		} else {
 			climber.climbMotors(0.0f);
 		}
+
 		if (operator.getRawButtonPressed(10)) {
 			climber.Tilt();
 		}
-		*/
+		/*
+		 * if (operator.getRawButton(11)) {
+		 * climber.climbMotors(0.5f);
+		 * } else if (operator.getRawButton(12)) {
+		 * climber.brakeMode();
+		 * climber.climbMotors(-0.5f);
+		 * } else {
+		 * climber.climbMotors(0.0f);
+		 * }
+		 * if (operator.getRawButtonPressed(10)) {
+		 * climber.Tilt();
+		 * }
+		 */
 
 		// Lime Light
 		if (flightStickLeft.getRawButton(6) || driver.getRawButton(6)) {
@@ -407,12 +405,10 @@ public class Robot extends TimedRobot {
 		} else {
 			driveTrain.SetCoast();
 
-			System.out.println("yaw " + navx.getYaw());
-
 			if (flightStickLeft.getRawButton(0)) {
 				double output = turnPID.Calculate(navx.getYaw());
-				driveTrain.SetBothSpeed((float)output);
-				driveTrain.SetLeftSpeed((float)-output);
+				driveTrain.SetBothSpeed((float) output);
+				driveTrain.SetLeftSpeed((float) -output);
 			} else {
 				ControllerDrive();
 			}
@@ -453,19 +449,18 @@ public class Robot extends TimedRobot {
 		climber.coastMode();
 		System.out.println(indexer.firstBeam.get() + " First beam");
 		System.out.println(indexer.secondBeam.get() + " Second beam");
-		
 
 		// forTesting.set(ControlMode.PercentOutput, 0.5f);
 
 		// if (flightStickRight.getRawButton(1)) {
-		// 	driveTrain.SetRightSpeed(0.5f);
-		// 	driveTrain.SetLeftSpeed(-0.5f);
+		// driveTrain.SetRightSpeed(0.5f);
+		// driveTrain.SetLeftSpeed(-0.5f);
 		// } else if (flightStickLeft.getRawButton(1)) {
-		// 	driveTrain.SetRightSpeed(-0.5f);
-		// 	driveTrain.SetLeftSpeed(0.5f);
+		// driveTrain.SetRightSpeed(-0.5f);
+		// driveTrain.SetLeftSpeed(0.5f);
 		// } else {
-		// 	driveTrain.SetRightSpeed(0.0f);
-		// 	driveTrain.SetLeftSpeed(0.0f);
+		// driveTrain.SetRightSpeed(0.0f);
+		// driveTrain.SetLeftSpeed(0.0f);
 		// }
 
 		// double shooterspeed = -0.0;
@@ -518,13 +513,11 @@ public class Robot extends TimedRobot {
 
 	// Intake Solenoid
 	public void intakeDown() {
-		System.out.println("Enabled");
 		SmartDashboard.putBoolean("intakeExtended", true);
 		intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
 	}
 
 	public void intakeUp() {
-		System.out.println("Disabled");
 		SmartDashboard.putBoolean("intakeExtended", false);
 		intakeSolenoid.set(DoubleSolenoid.Value.kForward);
 	}

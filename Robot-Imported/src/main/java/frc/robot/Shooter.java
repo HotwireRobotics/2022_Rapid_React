@@ -33,15 +33,19 @@ public class Shooter {
 
     public void Update() {
 
-        if (limelight.gety() >= 0) {
-            rpmTarget = 2150;
+        if (limelight.gety() >= -1.9) {
+            rpmTarget = 2000;
             preshooterpid.preRpmTarget = 3000;
-        } else if (limelight.gety() > -11.5) {
-            rpmTarget = 2300;
-            preshooterpid.preRpmTarget = 2500;
+        } else if (limelight.gety() > -100) {
+            rpmTarget = 2750;
+            preshooterpid.preRpmTarget = 2000;
+            // rpmTarget = 2300;
+            // preshooterpid.preRpmTarget = 2500;
         } else {
-            rpmTarget = 2700;
-            preshooterpid.preRpmTarget = 2222;
+            rpmTarget = 2150;
+            preshooterpid.preRpmTarget = 4000;
+            // rpmTarget = 2700;
+            // preshooterpid.preRpmTarget = 2222;
         }
         preshooterpid.Update();
 
