@@ -38,7 +38,22 @@ public class Indexer {
     public void RunManualForward(float speed, float RPMBuffer) {
         ballCount = 0;
         indexerMotor.setNeutralMode(NeutralMode.Brake);
+        /*
+        if(secondBeam.get()){
+            indexerMotor.set(ControlMode.PercentOutput, -speed);
+            return;
+        }
+        */
 
+        /*
+        if(secondBeam.get()){
+            indexerMotor.set(ControlMode.PercentOutput, -speed);
+        }else if(upToSpeed && encoder.getStopped) {
+            indexerMotor.set(ControlMode.PercentOutput, -speed);
+        }else{
+            indexerMotor.set(ControlMode.PercentOutput, 0);
+        }
+        */
         boolean upToSpeed = shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer);
 
         if (!upToSpeed) {

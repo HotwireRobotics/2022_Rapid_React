@@ -348,7 +348,7 @@ public class Robot extends TimedRobot {
 			// get target distance from limelight
 			// run indexer
 			float buffer = 0.04f;
-			float speed = -0.3f;
+			float speed = -0.4f;
 
 			if (operator.getRawButton(7)) {
 				indexer.RunManualForward(speed, buffer);

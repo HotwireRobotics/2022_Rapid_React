@@ -38,6 +38,7 @@ public class Shooter {
             preshooterpid.preRpmTarget = 3000;
         } else if (limelight.gety() > -100) {
             rpmTarget = 2750;
+            //really good possible bounce 2750 2000
             preshooterpid.preRpmTarget = 2000;
             // rpmTarget = 2300;
             // preshooterpid.preRpmTarget = 2500;
