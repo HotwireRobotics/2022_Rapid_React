@@ -16,7 +16,7 @@ public class Indexer {
     public DigitalInput firstBeam = new DigitalInput(1);
     public DigitalInput secondBeam = new DigitalInput(0);
         
-    public TalonSRX indexerMotor = new TalonSRX(2);
+    public TalonSRX indexerMotor = new TalonSRX(9);
 
     private Shooter shooter;
     private PreShooterpid preShooter;
@@ -28,9 +28,12 @@ public class Indexer {
 
     public void RunManualForward(float speed, float RPMBuffer) {
         ballCount = 0;
+        System.out.println(shooter.UpToSpeed(RPMBuffer)+ " shooter");
+        System.out.println(preShooter.UpToSpeed(RPMBuffer)+ " preshooter");
 
         if (shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer)) {
-            indexerMotor.set(ControlMode.PercentOutput, speed);
+            System.out.println("up to speed");
+            indexerMotor.set(ControlMode.PercentOutput, -speed);
         } else {
             indexerMotor.set(ControlMode.PercentOutput, 0);
         }
@@ -49,12 +52,12 @@ public class Indexer {
                 ballCount = 1;
             }
 
-            targetSpeed = -0.2f;
+            targetSpeed = 0.2f;
         }
 
         if (ballCount == 1) {
             if (!firstBeam.get() && secondBeam.get()) {
-                targetSpeed = -0.4f;
+                targetSpeed = 0.4f;
             }
         }
         System.out.println(targetSpeed+ " target speed");

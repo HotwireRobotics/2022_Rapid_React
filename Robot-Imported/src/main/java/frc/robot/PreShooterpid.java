@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class PreShooterpid {
     
-    public TalonSRX preShooterFive = new TalonSRX(6);
+    public TalonSRX preShooterFive = new TalonSRX(4);
     
     public Limelight limelight;
 
@@ -46,7 +46,7 @@ public class PreShooterpid {
 
 
         preRpmCurrent = TalonVelocityToRPM((float)preShooterFive.getSelectedSensorVelocity());
-        System.out.println(preRpmTarget + " prerpmtarget");
+        
 
         // Shooter code pid
         SmartDashboard.putNumber("preShooter_RPM", preRpmCurrent);
@@ -58,7 +58,8 @@ public class PreShooterpid {
         preshooterPid.setP(preshooterP);
         preshooterPid.setI(preshooterI);
         preshooterPid.setD(preshooterD);
-
+        
+        System.out.println("current - " + preRpmCurrent + " set " + preRpmTarget);
         double motorSpeed = preshooterPid.calculate(preRpmCurrent, preRpmTarget);
 
         if (motorSpeed < 0) {

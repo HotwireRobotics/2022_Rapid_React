@@ -95,14 +95,16 @@ public class Robot extends TimedRobot {
 	public Limelight limelight = new Limelight();
 	public PreShooterpid preshooterpid = new PreShooterpid(limelight);
 	public Shooter shooter = new Shooter(limelight, preshooterpid);
+	public HotPID navxPID = new HotPID("navx", 0.0005, 0, 0);
+	public NavxTurnPID navxturnpid = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
 	public Climber climber = new Climber();
 
 	// Motors
-	public TalonSRX forTesting = new TalonSRX(51);
-	public TalonSRX intakeSeven = new TalonSRX(5);
+	// public TalonSRX forTesting = new TalonSRX(51);
+	public TalonSRX intakeSeven = new TalonSRX(2);
 	public TalonSRX ShooterLeft = new TalonSRX(50);
-	public TalonSRX ShooterRight = new TalonSRX(4); // 51
-	public TalonSRX preShooterFive = new TalonSRX(6);
+	public TalonSRX ShooterRight = new TalonSRX(6); 
+	public TalonSRX preShooterFive = new TalonSRX(4);
 
 	public TalonSRX MotorSeven = new TalonSRX(30);
 	public TalonSRX MotorEight = new TalonSRX(31);
@@ -110,6 +112,8 @@ public class Robot extends TimedRobot {
 	public Indexer indexer = new Indexer(shooter, preshooterpid);
 
 	boolean limitPressed;
+
+	public HotPID turnPID;
 
 	public enum DriveScale {
 		linear, parabala, tangent, inverse, cb, cbrt,
@@ -138,6 +142,7 @@ public class Robot extends TimedRobot {
 		shooter.Init();
 		preshooterpid.Init();
 		SmartDashboard.putNumber(autoSelectKey, 0);
+
 	}
 
 	public void disabledInit() {
@@ -160,7 +165,8 @@ public class Robot extends TimedRobot {
 
 		driveTrain.SetBreak();
 		limelight.SetLight(true);
-
+		//TODO
+		/*
 		autoFourBall = new LinkedList<AutoStep>();
 		autoFourBall.add(new NavxReset(navx));
 		autoFourBall.add(new IntakeDrop(intakeSolenoid));
@@ -168,27 +174,33 @@ public class Robot extends TimedRobot {
 		// pickup first ball
 		autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
 		// move forward towards goal
-		autoFourBall.add(new EncoderForward(driveTrain, 52000, 0.35f)); //55000 .2
-		autoFourBall.add(new NavxTurn(driveTrain, navx, 10, 0.3f, 2.5f));
+		autoFourBall.add(new EncoderForward(driveTrain, 52000, 0.35f)); // 55000 .2
+		*/
+		//TODO
+		autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
+		//TODO
+		/*
 		autoFourBall.add(new EncoderForward(driveTrain, 5000, 0.2f));
-		//autoFourBall.add(new Wait(driveTrain, 0.5f));
+		// autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBall.add(new Shoot(shooter, indexer));
 		autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
 		autoFourBall.add(new NavxTurn(driveTrain, navx, 72, 0.3f, 2.5f));
 		autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
 		autoFourBall.add(new EncoderForward(driveTrain, 150000, -0.5f));
+		*/
+		//TODO
 
 		/*
-		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
-		// shoot
-		autoFourBall.add(new Shoot(shooter, indexer));
-		autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
-		autoFourBall.add(new NavxTurn(driveTrain, navx, 72, 0.3f, 5));
-		autoFourBall.add(new Wait(driveTrain, 0.5f));
-		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
-		autoFourBall.add(new EncoderForward(driveTrain, 150000, -0.5f));
-		*/
+		 * autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		 * // shoot
+		 * autoFourBall.add(new Shoot(shooter, indexer));
+		 * autoFourBall.add(new IntakeRun(intakeSeven, 0.0f));
+		 * autoFourBall.add(new NavxTurn(driveTrain, navx, 72, 0.3f, 5));
+		 * autoFourBall.add(new Wait(driveTrain, 0.5f));
+		 * autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		 * autoFourBall.add(new EncoderForward(driveTrain, 150000, -0.5f));
+		 */
 
 		double autoChoice = SmartDashboard.getNumber(autoSelectKey, 0);
 
@@ -236,6 +248,8 @@ public class Robot extends TimedRobot {
 		navx.reset();
 		limelight.SetLight(false);
 
+		turnPID = new HotPID("turn", 0, 0, 0);
+
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(0);
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("pipeline").setNumber(0);
 
@@ -243,7 +257,6 @@ public class Robot extends TimedRobot {
 		preshooterpid.Init();
 
 		driveTrain.SetCoast();
-		climber.lock();
 
 		// Controllers
 		driver = new Joystick(0);
@@ -285,15 +298,15 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
-		System.out.println(navx.getYaw()+ " yaw");
-		System.out.println(navx.getPitch()+ " pitch");
-		System.out.println(navx.getRoll()+ " roll");
+		// System.out.println(navx.getYaw() + " yaw");
+		// System.out.println(navx.getPitch() + " pitch");
+		// System.out.println(navx.getRoll() + " roll");
 		driveTrain.SendData();
 		SmartDashboard.putBoolean("RobotEnabled", true);
 
-		// Intake 2=B, 4=Y
+		// Intake 3=B, 4=Y
 		double intakeSpeed = 0.75f;
-		if (operator.getRawButton(2)) {
+		if (operator.getRawButton(3)) {
 			intakeSeven.set(ControlMode.PercentOutput, intakeSpeed);
 			SmartDashboard.putNumber("intakeMotor", intakeSpeed);
 		} else if (operator.getRawButton(4)) {
@@ -304,8 +317,8 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("intakeMotor", 0.0f);
 		}
 
-		// Intake Solenoid 1=A
-		if (operator.getRawButtonPressed(1)) {
+		// Intake Solenoid 2=A
+		if (operator.getRawButtonPressed(2)) {
 			if (intakeSolenoid.get() == Value.kForward) {
 				intakeDown();
 			} else if (intakeSolenoid.get() == Value.kReverse) {
@@ -316,17 +329,16 @@ public class Robot extends TimedRobot {
 		}
 
 		// Indexer 5=Left Bumper
-		int indexerAxis = 2;
+		// int indexerAxis = 2;
 
 		// System.out.println(firstBeam.get() + " - " + secondBeam.get());
 
 		// System.out.println("beam1 " + firstBeam + "beam2 " + secondBeam);
 		int shootButton = 5;
 		if (operator.getRawButtonPressed(shootButton)) {
-			shooter.shooterPid.reset();
+			shooter.pid.reset();
 			preshooterpid.preshooterPid.reset();
-			// preShooterFive.set(ControlMode.PercentOutput, 0.5f);
-			// TODO might be fault
+
 		}
 
 		if (operator.getRawButton(shootButton)) {
@@ -338,7 +350,7 @@ public class Robot extends TimedRobot {
 			float buffer = 0.05f;
 			float speed = -0.5f;
 
-			if (operator.getRawAxis(indexerAxis) > 0.5f) {
+			if (operator.getRawButton(7)) {
 				indexer.RunManualForward(speed, buffer);
 			}
 
@@ -346,7 +358,7 @@ public class Robot extends TimedRobot {
 			preshooterpid.PowerManual(0);
 			shooter.PowerManual(0);
 
-			if (operator.getRawAxis(indexerAxis) > 0.5f) {
+			if (operator.getRawButton(7)) {
 				indexer.RunAutomatic();
 			} else {
 				indexer.RunManualForward(0, 0);
@@ -354,25 +366,39 @@ public class Robot extends TimedRobot {
 		}
 
 		// Climber
-		// Button9=LeftJoystickClick
-		// Button10=RightJoystickClick
+		// Button11=LeftJoystickClick
+		// Button12=RightJoystickClick
+		int pov = operator.getPOV();
+		System.out.println(pov + "pov");
 
-		if (operator.getRawButton(9)) {
-			if (operator.getRawButtonPressed(9)) {
-				climber.Reset();
-			}
+		
+		if (pov != -1){
+		if (280 < pov || pov < 80) {
+			climber.brakeMode();
+			climber.climbMotors(-0.5f);
+		} else if (100 < pov && pov < 260) {
 			climber.climbMotors(0.5f);
-		} else if (operator.getRawButton(10)) {
-			if (operator.getRawButtonPressed(10)) {
-				climber.Reset();
-			}
+		}
+		}else{
+		climber.climbMotors(0.0f);
+		}
+	
+		if (operator.getRawButton(10)) {
+			climber.Tilt();
+		}
+		/*
+		if (operator.getRawButton(11)) {
+			climber.climbMotors(0.5f);
+		} else if (operator.getRawButton(12)) {
+			climber.brakeMode();
 			climber.climbMotors(-0.5f);
 		} else {
-			if (operator.getRawButtonReleased(9) || operator.getRawButtonReleased(10)) {
-				climber.Reset();
-			}
 			climber.climbMotors(0.0f);
 		}
+		if (operator.getRawButtonPressed(10)) {
+			climber.Tilt();
+		}
+		*/
 
 		// Lime Light
 		if (flightStickLeft.getRawButton(6) || driver.getRawButton(6)) {
@@ -380,7 +406,16 @@ public class Robot extends TimedRobot {
 			driveTrain.SetBreak();
 		} else {
 			driveTrain.SetCoast();
-			ControllerDrive();
+
+			System.out.println("yaw " + navx.getYaw());
+
+			if (flightStickLeft.getRawButton(0)) {
+				double output = turnPID.Calculate(navx.getYaw());
+				driveTrain.SetBothSpeed((float)output);
+				driveTrain.SetLeftSpeed((float)-output);
+			} else {
+				ControllerDrive();
+			}
 		}
 
 		UpdateMotors();
@@ -389,7 +424,6 @@ public class Robot extends TimedRobot {
 	public void testInit() {
 
 		navx.reset();
-		climber.unlock();
 		climber.coastMode();
 
 		// Controllers
@@ -415,27 +449,30 @@ public class Robot extends TimedRobot {
 	}
 
 	public void testPeriodic() {
-
+		// navxturnpid.Update();
 		climber.coastMode();
-		forTesting.set(ControlMode.PercentOutput, 0.5f);
+		System.out.println(indexer.firstBeam.get() + " First beam");
+		System.out.println(indexer.secondBeam.get() + " Second beam");
+		
 
-		if (flightStickRight.getRawButton(1)) {
-			driveTrain.SetRightSpeed(0.5f);
-			driveTrain.SetLeftSpeed(-0.5f);
-		} else if (flightStickLeft.getRawButton(1)) {
-			driveTrain.SetRightSpeed(-0.5f);
-			driveTrain.SetLeftSpeed(0.5f);
-		} else {
-			driveTrain.SetRightSpeed(0.0f);
-			driveTrain.SetLeftSpeed(0.0f);
-		}
+		// forTesting.set(ControlMode.PercentOutput, 0.5f);
 
-		double shooterspeed = -0.0;
+		// if (flightStickRight.getRawButton(1)) {
+		// 	driveTrain.SetRightSpeed(0.5f);
+		// 	driveTrain.SetLeftSpeed(-0.5f);
+		// } else if (flightStickLeft.getRawButton(1)) {
+		// 	driveTrain.SetRightSpeed(-0.5f);
+		// 	driveTrain.SetLeftSpeed(0.5f);
+		// } else {
+		// 	driveTrain.SetRightSpeed(0.0f);
+		// 	driveTrain.SetLeftSpeed(0.0f);
+		// }
+
+		// double shooterspeed = -0.0;
 		// shooterspeed = -((flightStickLeft.getRawAxis(2)-1)/2);
-		System.out.println(shooterspeed);
 		// ShooterLeft.set(ControlMode.PercentOutput, shooterspeed);
-		ShooterRight.set(ControlMode.PercentOutput, -shooterspeed);
-		limelight.SetLight(true);
+		// ShooterRight.set(ControlMode.PercentOutput, -shooterspeed);
+		// limelight.SetLight(true);
 
 		UpdateMotors();
 	}

@@ -7,42 +7,28 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Shooter {
 
-    public TalonSRX shooterTwo = new TalonSRX(4);  //51
+    public TalonSRX shooterTwo = new TalonSRX(6);  
     public TalonSRX shooterFive = new TalonSRX(50);
     
     public Limelight limelight;
     public PreShooterpid preshooterpid;
 
-    public double shooterP = 0.0001;
-    public double shooterI = 0.0004;
-    public double shooterD = 0.000;
-    public double shooterRPMTarget;
+    public HotPID pid;
 
     public boolean didHitSpeed = true;
-
-    String shooterPKey = "Shooter_P";
-    String shooterIKey = "Shooter_I";
-    String shooterDKey = "Shooter_D";
-    String shooterRPMKey = "Shooter_RPMTarget";
-
-    public PIDController shooterPid = new PIDController(shooterP, shooterI, shooterD);
 
     public double rpmTarget = 0;
 
     public float rpmCurrent = 0;
 
     public Shooter(Limelight limelight, PreShooterpid preshooterpid) {
+
         this.limelight = limelight;
         this.preshooterpid = preshooterpid;
     } 
 
     public void Init() {
-        SmartDashboard.putNumber(shooterPKey, shooterP);
-        SmartDashboard.putNumber(shooterIKey, shooterI);
-        SmartDashboard.putNumber(shooterDKey, shooterD);
-        SmartDashboard.putNumber(shooterRPMKey, shooterRPMTarget);
-
-        shooterPid = new PIDController(shooterP, shooterI, shooterD);
+        pid = new HotPID("shooter", 0.0001, 0.0004, 0);
     }
 
     public void Update() {
@@ -64,15 +50,8 @@ public class Shooter {
         // Shooter code pid
         SmartDashboard.putNumber("Shooter_RPM", rpmCurrent);
 
-        shooterP = SmartDashboard.getNumber(shooterPKey, shooterP);
-        shooterI = SmartDashboard.getNumber(shooterIKey, shooterI);
-        shooterD = SmartDashboard.getNumber(shooterDKey, shooterD);
-
-        shooterPid.setP(shooterP);
-        shooterPid.setI(shooterI);
-        shooterPid.setD(shooterD);
-
-        double motorSpeed = shooterPid.calculate(rpmCurrent, rpmTarget);
+        pid.setpoint = rpmTarget;
+        double motorSpeed = pid.Calculate(rpmCurrent);
 
         if (motorSpeed < 0) {
             motorSpeed = 0;

@@ -40,4 +40,8 @@ public class HotPID {
         return pid.calculate(sensorInput, setpoint);
     }
 
+    public void reset() {
+        pid.reset();
+    }
+
 }
