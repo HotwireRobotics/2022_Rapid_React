@@ -45,10 +45,13 @@ public class Indexer {
         }
         */
 
-        /*
+        /* 
+        boolean toggleencoder;
         if(secondBeam.get()){
+            toggleencoder = false
             indexerMotor.set(ControlMode.PercentOutput, -speed);
-        }else if(upToSpeed && encoder.getStopped) {
+        }else if(upToSpeed && encoder.getStopped || toggleencoder) {
+            toggleencoder = true
             indexerMotor.set(ControlMode.PercentOutput, -speed);
         }else{
             indexerMotor.set(ControlMode.PercentOutput, 0);

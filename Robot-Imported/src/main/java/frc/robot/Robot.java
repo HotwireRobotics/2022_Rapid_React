@@ -166,18 +166,23 @@ public class Robot extends TimedRobot {
 		driveTrain.SetBreak();
 		limelight.SetLight(true);
 		// TODO
-		/*
-		 * autoFourBall = new LinkedList<AutoStep>();
-		 * autoFourBall.add(new NavxReset(navx));
-		 * autoFourBall.add(new IntakeDrop(intakeSolenoid));
-		 * autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
-		 * // pickup first ball
-		 * autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
-		 * // move forward towards goal
-		 * autoFourBall.add(new EncoderForward(driveTrain, 52000, 0.35f)); // 55000 .2
-		 */
+		
+		autoFourBall = new LinkedList<AutoStep>();
+		autoFourBall.add(new NavxReset(navx));
+		autoFourBall.add(new IntakeDrop(intakeSolenoid));
+		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		// pickup first ball
+		autoFourBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
+		// move forward towards goal
+		autoFourBall.add(new EncoderForward(driveTrain, 15000, 0.35f)); // 55000 .2
+		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		// shoot
+		autoFourBall.add(new Shoot(shooter, indexer));
+
+
+
 		// TODO
-		autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
+		//autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
 		// TODO
 		/*
 		 * autoFourBall.add(new EncoderForward(driveTrain, 5000, 0.2f));
