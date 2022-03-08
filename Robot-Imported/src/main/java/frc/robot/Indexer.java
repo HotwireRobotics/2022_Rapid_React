@@ -24,6 +24,7 @@ public class Indexer {
     private Shooter shooter;
     private PreShooterpid preShooter;
 
+    boolean toggleencoder = false;
     boolean didPause = true;
     boolean shooting = false;
     Timer timer = new Timer();
@@ -38,60 +39,22 @@ public class Indexer {
     public void RunManualForward(float speed, float RPMBuffer) {
         ballCount = 0;
         indexerMotor.setNeutralMode(NeutralMode.Brake);
-        /*
-        if(secondBeam.get()){
-            indexerMotor.set(ControlMode.PercentOutput, -speed);
-            return;
-        }
-        */
+        boolean upToSpeed = shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer);
 
-        /* 
-        boolean toggleencoder;
         if(secondBeam.get()){
-            toggleencoder = false
+            toggleencoder = false;
             indexerMotor.set(ControlMode.PercentOutput, -speed);
-        }else if(upToSpeed && encoder.getStopped || toggleencoder) {
-            toggleencoder = true
+        
+        }else if(upToSpeed && (indexerMotor.getSelectedSensorVelocity() == 0) || toggleencoder) {
+            toggleencoder = true;
             indexerMotor.set(ControlMode.PercentOutput, -speed);
         }else{
             indexerMotor.set(ControlMode.PercentOutput, 0);
         }
-        */
-        boolean upToSpeed = shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer);
-
-        if (!upToSpeed) {
-            indexerMotor.set(ControlMode.PercentOutput, 0.0);
-            return;
-        }
-
-        if (shooting) {
-            indexerMotor.set(ControlMode.PercentOutput, -speed);
-            if (secondBeam.get()) {
-                shooting = false;
-            }
-        } else {
-
-            if (!secondBeam.get() && !didPause) {
-                speed = 0;
-                if (timer.get() > pauseTime) {
-                    shooting = true;
-                    didPause = true;
-                } else {
-                    didPause = false;
-                }
-
-            } else {
-                timer.reset();
-                timer.start();
-                didPause = false;
-            }
-
-            System.out.println(speed);
-            indexerMotor.set(ControlMode.PercentOutput, -speed);
-        }
     }
 
     public void RunAutomatic() {
+        toggleencoder = false;
 
         float targetSpeed = 0;
 
