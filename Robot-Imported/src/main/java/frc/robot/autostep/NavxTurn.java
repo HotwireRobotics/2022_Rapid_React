@@ -34,9 +34,11 @@ public class NavxTurn extends AutoStep {
         float degreeDifference = Math.abs(navx.getYaw() - turnDegree);
         //float goodEnoughDeg = 5.0f;
         if (degreeDifference < goodEnoughDeg) {
-            isDone = true;
             driveTrain.SetLeftSpeed(0);
             driveTrain.SetRightSpeed(0);
+            if (driveTrain.GetEncoderSpeed() == 0) {
+                isDone = true;
+            }
         }
     }
 }

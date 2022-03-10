@@ -30,7 +30,9 @@ public class Shooter {
     public void Init() {
         pid = new HotPID("shooter", 0.0001, 0.0004, 0);
     }
-
+    public void Reset(){
+        pid.reset();
+    }
     public void Update() {
 
         if (limelight.gety() >= -1.9) {

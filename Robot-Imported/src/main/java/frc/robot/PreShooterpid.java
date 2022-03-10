@@ -42,6 +42,10 @@ public class PreShooterpid {
         preshooterPid = new PIDController(preshooterP, preshooterI, preshooterD);
     }
 
+    public void Reset(){
+        preshooterPid.reset();
+    }
+
     public void Update() {
 
 

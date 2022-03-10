@@ -73,6 +73,8 @@ public class Robot extends TimedRobot {
 	// private ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 	public float encoderSpeed1 = 0;
 	public float encoderSpeed2 = 0;
+	
+
 	// public Encoder shooterEncoder = new Encoder();
 
 	// Drivetrain
@@ -94,9 +96,15 @@ public class Robot extends TimedRobot {
 	public Limelight limelight = new Limelight();
 	public PreShooterpid preshooterpid = new PreShooterpid(limelight);
 	public Shooter shooter = new Shooter(limelight, preshooterpid);
-	public HotPID navxPID = new HotPID("navx", 0.001, 0, 0);// was 0.0005
+
+	public HotPID navxPID = new HotPID("navx", 0.01, 0.01, 0.0);// was 0.0005
+
 	public NavxTurnPID navxturnpid = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
 	public Climber climber = new Climber();
+	public TalonSRX climberOne = new TalonSRX(35);
+	public TalonSRX climberTwo = new TalonSRX(52);
+
+
 
 	// Motors
 	// public TalonSRX forTesting = new TalonSRX(51);
@@ -109,8 +117,9 @@ public class Robot extends TimedRobot {
 	public TalonSRX MotorEight = new TalonSRX(31);
 
 	public Indexer indexer = new Indexer(shooter, preshooterpid);
-
+	public TalonSRX indexerMotor = new TalonSRX(9);
 	boolean limitPressed;
+	public boolean toggleClimbers = false;
 
 	public HotPID turnPID;
 
@@ -140,6 +149,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void disabledInit() {
+
 		// Controllers
 		driveTrain.SetBreak();
 		driver = new Joystick(0);
@@ -154,13 +164,14 @@ public class Robot extends TimedRobot {
 	}
 
 	public void autonomousInit() {
+		climber.errorSet();
 		currentAutoStep = 0;
 		NetworkTableInstance.getDefault().getTable("limelight").getEntry("stream").setNumber(1);
 
 		driveTrain.SetBreak();
 		limelight.SetLight(true);
 
-		//Twoball outside
+		// Twoball outside
 		autoTwoBall = new LinkedList<AutoStep>();
 		autoTwoBall.add(new NavxReset(navx));
 		autoTwoBall.add(new IntakeDrop(intakeSolenoid));
@@ -172,8 +183,8 @@ public class Robot extends TimedRobot {
 		autoTwoBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		// shoot
 		autoTwoBall.add(new Shoot(shooter, indexer));
-		
-		//FourBall
+
+		// FourBall
 		autoFourBall = new LinkedList<AutoStep>();
 		autoFourBall.add(new NavxReset(navx));
 		autoFourBall.add(new IntakeDrop(intakeSolenoid));
@@ -185,19 +196,21 @@ public class Robot extends TimedRobot {
 		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		// shoot
 		autoFourBall.add(new Shoot(shooter, indexer));
-		autoFourBall.add(new NavxTurn(driveTrain, navx, 10, 0.5f, 2.0f));
+		autoFourBall.add(new NavxTurn(driveTrain, navx, 10, 0.3f, 1.0f));
+		autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBall.add(new EncoderForward(driveTrain, 80000, -0.5f));
 
-		//auto test
+		// auto test
 		autoTest = new LinkedList<AutoStep>();
 		autoTest.add(new NavxReset(navx));
-		autoTest.add(new NavxTurnPID(driveTrain, navx, 90, 1, navxPID));
-		//autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
+		autoTest.add(new NavxTurnPID(driveTrain, navx, -90, 1, navxPID));
+		autoTest.add(new EncoderForward(driveTrain, 8000, -0.3f));
+		// autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
 
 		double autoChoice = SmartDashboard.getNumber(autoSelectKey, 0);
 
 		autonomousSelected = autoTwoBall;
-		if (autoChoice == 1){
+		if (autoChoice == 1) {
 			System.out.println("Auto Selected auto four ball");
 			autonomousSelected = autoFourBall;
 		} else {
@@ -243,6 +256,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopInit() {
+		climber.errorSet();
 		navx.reset();
 		limelight.SetLight(false);
 
@@ -261,6 +275,7 @@ public class Robot extends TimedRobot {
 		operator = new Joystick(1);
 		flightStickLeft = new Joystick(3);
 		flightStickRight = new Joystick(2);
+
 	}
 
 	// Drive Scale
@@ -296,6 +311,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
+		System.out.println(navx.getYaw() + " yaw");
 		driveTrain.SendData();
 		SmartDashboard.putBoolean("RobotEnabled", true);
 
@@ -324,12 +340,10 @@ public class Robot extends TimedRobot {
 		}
 
 		int shootButton = 5;
-		if (operator.getRawButtonPressed(shootButton)) {
-			shooter.pid.reset();
-			preshooterpid.preshooterPid.reset();
-
+		if (operator.getRawButtonReleased(shootButton)) {
+			shooter.Reset();
+			preshooterpid.Reset();
 		}
-
 		if (operator.getRawButton(shootButton)) {
 			shooter.Update();
 			// get target distance from limelight
@@ -346,17 +360,23 @@ public class Robot extends TimedRobot {
 
 			if (operator.getRawButton(7)) {
 				indexer.RunAutomatic();
+			} else if (operator.getRawButton(1)) {
+				indexerMotor.set(ControlMode.PercentOutput, -0.6f);
+				shooter.pid.reset();
+				preshooterpid.preshooterPid.reset();
 			} else {
 				indexer.RunManualForward(0, 0);
 			}
 		}
 
 		// Climber Uses POV
+		
 		int pov = operator.getPOV();
-
 		if (pov != -1) {
 			if (280 < pov || pov < 80) {
+
 				climber.climbMotors(0.5f);
+
 			} else if (100 < pov && pov < 260) {
 				climber.brakeMode();
 				climber.climbMotors(-0.5f);
@@ -391,7 +411,7 @@ public class Robot extends TimedRobot {
 	public void testInit() {
 
 		navx.reset();
-		climber.coastMode();
+		// climber.coastMode();
 
 		// Controllers
 		driver = new Joystick(0);
@@ -400,6 +420,8 @@ public class Robot extends TimedRobot {
 		flightStickRight = new Joystick(2);
 		preshooterpid.Init();
 		shooter.Init();
+		// encodererror1 = climberOne.getSelectedSensorPosition();
+		// encodererror2 = climberTwo.getSelectedSensorPosition();
 
 	}
 
@@ -416,10 +438,12 @@ public class Robot extends TimedRobot {
 	}
 
 	public void testPeriodic() {
+		System.out.println(climberOne.getSelectedSensorPosition());
+
+		// System.out.println((climberTwo.getSelectedSensorPosition() - encodererror2) + "climber two");
+		// System.out.println((climberOne.getSelectedSensorPosition() - encodererror1) + "climber one");
 		driveTrain.SetCoast();
 		climber.coastMode();
-		System.out.println(indexer.firstBeam.get() + " First beam");
-		System.out.println(indexer.secondBeam.get() + " Second beam");
 
 		// forTesting.set(ControlMode.PercentOutput, 0.5f);
 		// limelight.SetLight(true);
