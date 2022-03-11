@@ -174,20 +174,22 @@ public class Robot extends TimedRobot {
 		// Twoball outside
 		autoTwoBall = new LinkedList<AutoStep>();
 		autoTwoBall.add(new NavxReset(navx));
-		autoTwoBall.add(new IntakeDrop(intakeSolenoid));
+		autoTwoBall.add(new IntakeDrop(intakeSolenoid, true));
 		autoTwoBall.add(new IntakeRun(intakeSeven, 0.8f));
 		// pickup first ball
-		autoTwoBall.add(new EncoderForward(driveTrain, 35000, -0.2f));
+		autoTwoBall.add(new EncoderForward(driveTrain, 36000, -0.2f));
 		// move forward towards goal
-		autoTwoBall.add(new EncoderForward(driveTrain, 2500, 0.35f));
+		autoTwoBall.add(new EncoderForward(driveTrain, 3500, 0.35f));
 		autoTwoBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		// shoot
 		autoTwoBall.add(new Shoot(shooter, indexer));
+		autoTwoBall.add(new IntakeDrop(intakeSolenoid, false));
+		autoTwoBall.add(new EncoderForward(driveTrain, 15000, -0.2f));
 
 		// FourBall
 		autoFourBall = new LinkedList<AutoStep>();
 		autoFourBall.add(new NavxReset(navx));
-		autoFourBall.add(new IntakeDrop(intakeSolenoid));
+		autoFourBall.add(new IntakeDrop(intakeSolenoid, true));
 		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
 		// pickup first ball
 		autoFourBall.add(new EncoderForward(driveTrain, 45000, -0.2f));
@@ -196,7 +198,7 @@ public class Robot extends TimedRobot {
 		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		// shoot
 		autoFourBall.add(new Shoot(shooter, indexer));
-		autoFourBall.add(new NavxTurn(driveTrain, navx, 10, 0.3f, 1.0f));
+		autoFourBall.add(new NavxTurn(driveTrain, navx, 10, -0.3f, 1.0f));
 		autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBall.add(new EncoderForward(driveTrain, 80000, -0.5f));
 
@@ -440,8 +442,11 @@ public class Robot extends TimedRobot {
 	public void testPeriodic() {
 		System.out.println(climberOne.getSelectedSensorPosition());
 
-		// System.out.println((climberTwo.getSelectedSensorPosition() - encodererror2) + "climber two");
-		// System.out.println((climberOne.getSelectedSensorPosition() - encodererror1) + "climber one");
+		//System.out.println((climberTwo.getSelectedSensorPosition() + "climber two"));
+		// System.out.println((climberOne.getSelectedSensorPosition() + "climber one"));
+
+		System.out.println("first " + indexer.firstBeam.get() + " second " + indexer.secondBeam.get());
+
 		driveTrain.SetCoast();
 		climber.coastMode();
 

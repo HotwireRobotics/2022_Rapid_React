@@ -22,21 +22,22 @@ public class Climber {
     public TalonSRX climberTwo = new TalonSRX(52);
     public DoubleSolenoid lockDoubleSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 6, 7);
     public double encodererror1;
-	public double encodererror2;
+    public double encodererror2;
 
     public float changeDelay = 0.2f;
 
-    public void errorSet(){
+    public void errorSet() {
         encodererror1 = climberOne.getSelectedSensorPosition();
-		encodererror2 = climberTwo.getSelectedSensorPosition();
-    }
-    public void coastMode(){
-		climberOne.setNeutralMode(NeutralMode.Coast);
-		climberTwo.setNeutralMode(NeutralMode.Coast);
+        encodererror2 = climberTwo.getSelectedSensorPosition();
     }
 
-    public void brakeMode(){
-		climberOne.setNeutralMode(NeutralMode.Brake);
+    public void coastMode() {
+        climberOne.setNeutralMode(NeutralMode.Coast);
+        climberTwo.setNeutralMode(NeutralMode.Coast);
+    }
+
+    public void brakeMode() {
+        climberOne.setNeutralMode(NeutralMode.Brake);
         climberTwo.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -51,19 +52,19 @@ public class Climber {
     }
 
     public void climbMotors(float climbSpeed) {
-        if (climbSpeed > 0 ){
-        if ((climberTwo.getSelectedSensorPosition() - encodererror2) > -179000){// 183000
-        climberTwo.set(ControlMode.PercentOutput, -climbSpeed);
-        }else{
-            System.out.println("hello");
-            climberTwo.set(ControlMode.PercentOutput, 0);
-        }
-        if ((climberOne.getSelectedSensorPosition() - encodererror1) < 183000){// -300
-            climberOne.set(ControlMode.PercentOutput, climbSpeed);
-            }else{
+        if (climbSpeed > 0) {
+            if ((climberTwo.getSelectedSensorPosition() - encodererror2) > -183835) {// -179000
+                climberTwo.set(ControlMode.PercentOutput, -climbSpeed);
+            } else {
+                System.out.println("hello");
+                climberTwo.set(ControlMode.PercentOutput, 0);
+            }
+            if ((climberOne.getSelectedSensorPosition() - encodererror1) < 183835) {// 183000
+                climberOne.set(ControlMode.PercentOutput, climbSpeed);
+            } else {
                 climberOne.set(ControlMode.PercentOutput, 0);
             }
-        }else{
+        } else {
             climberOne.set(ControlMode.PercentOutput, climbSpeed);
             climberTwo.set(ControlMode.PercentOutput, -climbSpeed);
         }

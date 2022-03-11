@@ -10,16 +10,22 @@ import frc.robot.DriveTrain;
 
 public class IntakeDrop extends AutoStep {
 
-public DoubleSolenoid intakeSolenoid;
+    public DoubleSolenoid intakeSolenoid;
 
-    public IntakeDrop(DoubleSolenoid intakeSolenoid) {
+    boolean direction;
+
+    public IntakeDrop(DoubleSolenoid intakeSolenoid, boolean direction) {
         super();
+        this.direction = direction;
         this.intakeSolenoid = intakeSolenoid;
     }
 
-    public void Begin() {     
-		SmartDashboard.putBoolean("intakeExtended", true);
-		intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+    public void Begin() {
+        if (direction) {
+            intakeSolenoid.set(DoubleSolenoid.Value.kReverse);
+        } else {
+            intakeSolenoid.set(DoubleSolenoid.Value.kForward);
+        }
     }
 
     public void Update() {
