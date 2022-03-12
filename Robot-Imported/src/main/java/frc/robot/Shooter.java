@@ -39,11 +39,9 @@ public class Shooter {
             rpmTarget = 2000;
             preshooterpid.preRpmTarget = 3000;
         } else if (limelight.gety() > -100) {
-            rpmTarget = 2750;
-            //really good possible bounce 2750 2000
-            preshooterpid.preRpmTarget = 2000;
-            // rpmTarget = 2300;
-            // preshooterpid.preRpmTarget = 2500;
+            System.out.println("Second zone");
+            rpmTarget = 2650;//2750
+            preshooterpid.preRpmTarget = 1800;
         } else {
             rpmTarget = 2150;
             preshooterpid.preRpmTarget = 4000;
