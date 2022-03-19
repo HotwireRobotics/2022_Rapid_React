@@ -41,42 +41,45 @@ public class Indexer {
         indexerMotor.setNeutralMode(NeutralMode.Brake);
         boolean upToSpeed = shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer);
 
-        if(secondBeam.get()){
+        if (secondBeam.get()) {
             toggleencoder = false;
             indexerMotor.set(ControlMode.PercentOutput, -speed);
-        
-        }else if(upToSpeed && (indexerMotor.getSelectedSensorVelocity() == 0) || toggleencoder) {
+
+        } else if (upToSpeed && (indexerMotor.getSelectedSensorVelocity() == 0) || toggleencoder) {
             toggleencoder = true;
             indexerMotor.set(ControlMode.PercentOutput, -speed);
-        }else{
+        } else {
             indexerMotor.set(ControlMode.PercentOutput, 0);
         }
     }
 
     public void RunAutomatic() {
         toggleencoder = false;
+        if (secondBeam.get()) {
+            float targetSpeed = 0;
 
-        float targetSpeed = 0;
+            if (ballCount == 0) {
+                if (!firstBeam.get()) {
+                    firstInitialTrigger = true;
+                }
 
-        if (ballCount == 0) {
-            if (!firstBeam.get()) {
-                firstInitialTrigger = true;
+                if (firstInitialTrigger && firstBeam.get()) {
+                    ballCount = 1;
+                }
+
+                targetSpeed = 0.2f;
             }
 
-            if (firstInitialTrigger && firstBeam.get()) {
-                ballCount = 1;
+            if (ballCount == 1) {
+                if (!firstBeam.get() && secondBeam.get()) {
+                    targetSpeed = 0.4f;
+                }
             }
-
-            targetSpeed = 0.2f;
+            System.out.println(targetSpeed + " target speed");
+            indexerMotor.set(ControlMode.PercentOutput, targetSpeed);
+        } else {
+            indexerMotor.set(ControlMode.PercentOutput, 0);
         }
-
-        if (ballCount == 1) {
-            if (!firstBeam.get() && secondBeam.get()) {
-                targetSpeed = 0.4f;
-            }
-        }
-        System.out.println(targetSpeed + " target speed");
-        indexerMotor.set(ControlMode.PercentOutput, targetSpeed);
     }
 
     public void DebugPrint() {

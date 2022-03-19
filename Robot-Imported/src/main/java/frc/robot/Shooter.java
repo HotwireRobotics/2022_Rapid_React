@@ -7,9 +7,9 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Shooter {
 
-    public TalonSRX shooterTwo = new TalonSRX(6);  
+    public TalonSRX shooterTwo = new TalonSRX(6);
     public TalonSRX shooterFive = new TalonSRX(50);
-    
+
     public Limelight limelight;
     public PreShooterpid preshooterpid;
 
@@ -25,32 +25,53 @@ public class Shooter {
 
         this.limelight = limelight;
         this.preshooterpid = preshooterpid;
-    } 
+    }
 
     public void Init() {
         pid = new HotPID("shooter", 0.0001, 0.0004, 0);
     }
-    public void Reset(){
+
+    public void Reset() {
         pid.reset();
     }
+
     public void Update() {
 
-        if (limelight.gety() >= -1.9) {
-            rpmTarget = 2000;
-            preshooterpid.preRpmTarget = 3000;
-        } else if (limelight.gety() > -100) {
-            System.out.println("Second zone");
-            rpmTarget = 2650;//2750
-            preshooterpid.preRpmTarget = 1800;
-        } else {
-            rpmTarget = 2150;
-            preshooterpid.preRpmTarget = 4000;
-            // rpmTarget = 2700;
-            // preshooterpid.preRpmTarget = 2222;
-        }
+        // if (limelight.gety() >= -1.9) {
+        // rpmTarget = 2000;
+        // preshooterpid.preRpmTarget = 3000;
+        // } else if (limelight.gety() > -100) {
+        System.out.println("Second zone");
+        rpmTarget = 1650;// 2750 act 2650//2000far//1800//mid bumper line1600,2000
+        preshooterpid.preRpmTarget = 2000;// 1800far
+        // } else {
+        // rpmTarget = 2150;
+        // preshooterpid.preRpmTarget = 4000;
+        // // rpmTarget = 2700;
+        // // preshooterpid.preRpmTarget = 2222;
+        // }
+
+        float nearY = 16.0f;
+        float farY = 0.0f;
+
+        float dist = Math.abs(farY - nearY);
+        float relDist = Math.abs((float)limelight.gety() - nearY) / dist;
+
+        // shooter
+        float nearShooterRPM = 1650;
+        float farShooterRPM = 2100;
+        float shooterSpeed = Lerp(nearShooterRPM, farShooterRPM, relDist);
+        rpmTarget = shooterSpeed;
+
+        // preshooter
+        float nearPreRPM = 2000;
+        float farPreRPM = 2000;
+        float preShooterSpeed = Lerp(nearPreRPM, farPreRPM, relDist);
+        preshooterpid.preRpmTarget = preShooterSpeed;
+
         preshooterpid.Update();
 
-        rpmCurrent = TalonVelocityToRPM((float)shooterTwo.getSelectedSensorVelocity());
+        rpmCurrent = TalonVelocityToRPM((float) shooterTwo.getSelectedSensorVelocity());
 
         // Shooter code pid
         SmartDashboard.putNumber("Shooter_RPM", rpmCurrent);
@@ -87,5 +108,16 @@ public class Shooter {
     public float TalonVelocityToRPM(float ticks) {
         float rpm = ((ticks / 2048) * 600);
         return Math.abs(rpm);
+    }
+
+    public float Lerp(float v0, float v1, float t) {
+
+        if (t <= 0) {
+            t = 0;
+        } else if (t >= 1) {
+            t = 1;
+        }
+
+        return (v0 + t * (v1 - v0));
     }
 }

@@ -31,25 +31,31 @@ public class Shoot extends AutoStep {
     }
 
     public void Begin() {
-        tickStart = (int)indexer.indexerMotor.getSelectedSensorPosition();
+        tickStart = (int) indexer.indexerMotor.getSelectedSensorPosition();
         shooter.rpmTarget = rpmTarget;
         balltimer = new Timer();
-        balltimer.stop(); 
-        balltimer.start();       
+        balltimer.stop();
+        balltimer.reset();
+        balltimer.start();
     }
 
     public void Update() {
         System.out.println(ballcount + " ballcount");
+        // Timer for override
+        if (balltimer.get() > 5) {
+            isDone = true;
+        }
+
         if (!indexer.secondBeam.get()) {
             toggle = true;
         }
-        if (indexer.secondBeam.get()&& toggle) {
+        if (indexer.secondBeam.get() && toggle) {
             toggle = false;
             ballcount = ballcount + 1;
         }
-        if (ballcount == 2){
+        if (ballcount == 2) {
             isDone = true;
-        }else{
+        } else {
             shooter.Update();
             indexer.RunManualForward(-0.6f, 0.1f);
         }

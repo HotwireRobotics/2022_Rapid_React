@@ -4,8 +4,10 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.robot.DriveTrain;
 import frc.robot.Indexer;
 
-public class EncoderForward extends AutoStep {
+public class EncoderForwardFeet extends AutoStep {
 
+    public float adjuster = 11398;
+    public float encoderTargetFeet;
     public float encoderTarget;
     public float speed;
     public double encoderStart;
@@ -13,9 +15,9 @@ public class EncoderForward extends AutoStep {
 
     public DriveTrain driveTrain;
 
-    public EncoderForward(DriveTrain driveTrain, float encoderTarget, float speed) {
+    public EncoderForwardFeet(DriveTrain driveTrain, float encoderTargetFeet, float speed) {
         super();
-        this.encoderTarget = encoderTarget;
+        this.encoderTargetFeet = encoderTargetFeet;
         this.speed = speed;
         this.driveTrain = driveTrain;
     }
@@ -27,10 +29,9 @@ public class EncoderForward extends AutoStep {
     }
 
     public void Update() {
-
+        encoderTarget = encoderTargetFeet * adjuster;
         double currentError = Math.abs(encoderStart - driveTrain.GetEncoder());
-
-        if (currentError < 10000) {
+        if (currentError < 1) {
             driveTrain.SetBothSpeed(0.2f * dir);
         }
         if (currentError > encoderTarget) {
