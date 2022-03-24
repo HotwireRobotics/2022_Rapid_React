@@ -11,11 +11,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
 
-    private float targetBuffer = 3;
+    private float targetBuffer = 2f;
 
-    public double p = 0.025;
-    public double i = 0.000;
-    public double d = 0.001;
+    public double p = 0.03;//0.04
+    public double i = 0.005;
+    public double d = 0.005;//0.001
 
     String pKey = "limelight_P";
     String iKey = "limelight_I";
@@ -100,8 +100,17 @@ public class Limelight {
         // calculate 
         float pidOut = (float)pid.calculate(tx.getDouble(0.0), 0);
 
-        // use to reduce error
+        // use to increase error
+        // double x;
+        // x = (float)tx.getDouble(0.0);
+        // float dir = (float) x/ (float)Math.abs(x);
+        // if (Math.abs(pidOut) < 0.13f){
+        //     pidOut = 0.13f * dir;
+        // }
         driveTrain.SetLeftSpeed(-pidOut);
         driveTrain.SetRightSpeed(pidOut);
+    }
+    public void reset(){
+        pid.reset();
     }
 }

@@ -13,7 +13,7 @@
         "tiles": {
           "0,0": {
             "size": [
-              10,
+              9,
               5
             ],
             "content": {
@@ -28,6 +28,61 @@
               "fps": -1,
               "imageWidth": -1,
               "imageHeight": -1
+            }
+          },
+          "9,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/turn_P",
+              "_title": "turn_P"
+            }
+          },
+          "9,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/turn_I",
+              "_title": "turn_I"
+            }
+          },
+          "9,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/turn_D",
+              "_title": "turn_D"
+            }
+          },
+          "9,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/turn_setpoint",
+              "_title": "turn_setpoint"
+            }
+          },
+          "9,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/intakeMotor",
+              "_title": "intakeMotor"
             }
           }
         }
@@ -309,6 +364,71 @@
                   "_type": "PID Controller",
                   "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[42]",
                   "_title": "PIDController[42]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[44]",
+                  "_title": "PIDController[44]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[45]",
+                  "_title": "PIDController[45]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[46]",
+                  "_title": "PIDController[46]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[47]",
+                  "_title": "PIDController[47]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[49]",
+                  "_title": "PIDController[49]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[48]",
+                  "_title": "PIDController[48]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[50]",
+                  "_title": "PIDController[50]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[53]",
+                  "_title": "PIDController[53]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[51]",
+                  "_title": "PIDController[51]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[52]",
+                  "_title": "PIDController[52]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[54]",
+                  "_title": "PIDController[54]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[56]",
+                  "_title": "PIDController[56]"
+                },
+                {
+                  "_type": "PID Controller",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[55]",
+                  "_title": "PIDController[55]"
                 }
               ]
             }
@@ -327,15 +447,37 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "0,0": {
+          "4,0": {
             "size": [
-              7,
-              3
+              2,
+              1
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/autoMode",
-              "_title": "/SmartDashboard/autoMode"
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/FourBall",
+              "_title": "SmartDashboard/FourBall"
+            }
+          },
+          "2,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/TwoBall",
+              "_title": "SmartDashboard/TwoBall"
+            }
+          },
+          "6,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/Test",
+              "_title": "SmartDashboard/Test"
             }
           }
         }

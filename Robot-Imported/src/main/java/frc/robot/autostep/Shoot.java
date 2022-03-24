@@ -57,7 +57,7 @@ public class Shoot extends AutoStep {
             isDone = true;
         } else {
             shooter.Update();
-            indexer.RunManualForward(-0.6f, 0.1f);
+            indexer.RunManualForward(0.6f, 0.03f);//0.1 we are idots
         }
     }
 }

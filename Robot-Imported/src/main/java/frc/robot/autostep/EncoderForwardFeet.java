@@ -1,5 +1,6 @@
 package frc.robot.autostep;
 
+import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.DriveTrain;
 import frc.robot.Indexer;
@@ -31,7 +32,7 @@ public class EncoderForwardFeet extends AutoStep {
     public void Update() {
         encoderTarget = encoderTargetFeet * adjuster;
         double currentError = Math.abs(encoderStart - driveTrain.GetEncoder());
-        if (currentError < 1) {
+        if (encoderTarget-currentError < 48000) {
             driveTrain.SetBothSpeed(0.2f * dir);
         }
         if (currentError > encoderTarget) {

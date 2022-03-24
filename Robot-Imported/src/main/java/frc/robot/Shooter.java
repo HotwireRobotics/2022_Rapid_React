@@ -51,21 +51,21 @@ public class Shooter {
         // // preshooterpid.preRpmTarget = 2222;
         // }
 
-        float nearY = 16.0f;
-        float farY = 0.0f;
+        float nearY =35.7f;//16
+        float farY = 19f;//20.7
 
         float dist = Math.abs(farY - nearY);
         float relDist = Math.abs((float)limelight.gety() - nearY) / dist;
 
         // shooter
-        float nearShooterRPM = 1650;
-        float farShooterRPM = 2100;
+        float nearShooterRPM = 1600;//1650
+        float farShooterRPM = 2100;//hangar//2100//2050
         float shooterSpeed = Lerp(nearShooterRPM, farShooterRPM, relDist);
         rpmTarget = shooterSpeed;
 
         // preshooter
-        float nearPreRPM = 2000;
-        float farPreRPM = 2000;
+        float nearPreRPM = 1700;
+        float farPreRPM = 1800;//1817
         float preShooterSpeed = Lerp(nearPreRPM, farPreRPM, relDist);
         preshooterpid.preRpmTarget = preShooterSpeed;
 

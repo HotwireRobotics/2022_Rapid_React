@@ -30,7 +30,7 @@ public class EncoderForward extends AutoStep {
 
         double currentError = Math.abs(encoderStart - driveTrain.GetEncoder());
 
-        if (currentError < 10000) {
+        if (encoderTarget-currentError < 48000) {
             driveTrain.SetBothSpeed(0.2f * dir);
         }
         if (currentError > encoderTarget) {
