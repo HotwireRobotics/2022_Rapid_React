@@ -12,6 +12,10 @@ public class Shooter {
 
     public Limelight limelight;
     public PreShooterpid preshooterpid;
+    public double shooterP = 0.0001;
+    public double shooterI = 0.0004;
+    public double shooterD = 0.0;
+    
 
     public HotPID pid;
 
@@ -23,17 +27,28 @@ public class Shooter {
 
     public Shooter(Limelight limelight, PreShooterpid preshooterpid) {
 
+
         this.limelight = limelight;
         this.preshooterpid = preshooterpid;
     }
 
     public void Init() {
-        pid = new HotPID("shooter", 0.0001, 0.0004, 0);
+        SmartDashboard.putNumber("ShooterP", shooterP);
+        SmartDashboard.putNumber("ShooterI", shooterI);
+        SmartDashboard.putNumber("ShooterD", shooterD);
+        shooterP = SmartDashboard.getNumber("ShooterP", shooterP);
+        shooterI = SmartDashboard.getNumber("ShooterI", shooterI);
+        shooterD = SmartDashboard.getNumber("ShooterD", shooterD);
+
+
+        pid = new HotPID("shooter", shooterP, shooterI, shooterD);
     }
 
     public void Reset() {
+
         pid.reset();
     }
+    
 
     public void Update() {
 

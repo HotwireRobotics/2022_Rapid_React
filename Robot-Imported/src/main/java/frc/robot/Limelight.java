@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Limelight {
 
-    private float targetBuffer = 2f;
+    private float targetBuffer = 3f;
 
     public double p = 0.03;//0.04
     public double i = 0.005;

@@ -54,13 +54,14 @@ public class Indexer {
 
         if (secondBeam.get()) {
             
-            System.out.println(speed+ " speed");
+            System.out.println(speed + " speed");
 
             toggle2 = true;
             toggleencoder = false;
             indexerMotor.set(ControlMode.PercentOutput, -speed);
 
-        } else if (timer.hasElapsed(0.15) && upToSpeed && (indexerMotor.getSelectedSensorVelocity() == 0) || toggleencoder) {
+        } else if (timer.hasElapsed(0.25) && upToSpeed && (indexerMotor.getSelectedSensorVelocity() == 0) || toggleencoder) {
+            System.out.println("shooting!!!");
             ballCountD = 0;
             toggleencoder = true;
             indexerMotor.set(ControlMode.PercentOutput, -speed);

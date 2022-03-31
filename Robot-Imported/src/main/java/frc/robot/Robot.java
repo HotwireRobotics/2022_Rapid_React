@@ -129,7 +129,8 @@ public class Robot extends TimedRobot {
 
 	// Auto
 	public LinkedList<AutoStep> autonomousSelected;
-	public LinkedList<AutoStep> autoFourBall;
+	public LinkedList<AutoStep> autoFourBallRed;
+	public LinkedList<AutoStep> autoFourBallBlue;
 	public LinkedList<AutoStep> autoTwoBall;
 	public LinkedList<AutoStep> autoTest;
 	public int currentAutoStep = 0;
@@ -137,6 +138,10 @@ public class Robot extends TimedRobot {
 	public String autoSelectKey = "autoMode";
 
 	public void robotInit() {
+		SmartDashboard.putBoolean("TwoBall", false);
+		SmartDashboard.putBoolean("FourBallBlue", false);
+		SmartDashboard.putBoolean("FourBallRed", false);
+		SmartDashboard.putBoolean("Test", false);
 		CameraServer.startAutomaticCapture();
 		limelight.SetLight(false);
 		limelight.Init();
@@ -184,43 +189,76 @@ public class Robot extends TimedRobot {
 		autoTwoBall.add(new IntakeDrop(intakeSolenoid, false));
 		autoTwoBall.add(new EncoderForward(driveTrain, 15000, -0.2f));
 
-		// FourBall
-		autoFourBall = new LinkedList<AutoStep>();
-		autoFourBall.add(new NavxReset(navx));
-		autoFourBall.add(new IntakeDrop(intakeSolenoid, true));
-		autoFourBall.add(new IntakeRun(intakeSeven, 0.8f));
+		// FourBallRed
+		autoFourBallRed = new LinkedList<AutoStep>();
+		autoFourBallRed.add(new Print("red ran"));
+		autoFourBallRed.add(new NavxReset(navx));
+		autoFourBallRed.add(new IntakeDrop(intakeSolenoid, true));
+		autoFourBallRed.add(new IntakeRun(intakeSeven, 0.8f));
 		// pickup first ball
-		autoFourBall.add(new EncoderForward(driveTrain, 53898, -0.4f));
-		autoFourBall.add(new EncoderForwardFeet(driveTrain, 1, -0.4f));
+		autoFourBallRed.add(new EncoderForward(driveTrain, 53898, -0.4f));
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 1, -0.4f));
 		// move forward towards goal
 		//autoFourBall.add(new EncoderForward(driveTrain, 2500, 0.35f)); // 55000 .2
-		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
-		autoFourBall.add(new Wait(driveTrain, 0.3f));
+		autoFourBallRed.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		// shoot
-		autoFourBall.add(new Shoot(shooter, indexer));
-		autoFourBall.add(new NavxTurn(driveTrain, navx, 17f, 0.15f, 3.0f));// -speed 14
+		autoFourBallRed.add(new Shoot(shooter, indexer));
+		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 16f, 0.15f, 3.0f));// -speed 14
 		// autoFourBall.add(new Wait(driveTrain, 0.5f));
-		autoFourBall.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
-		autoFourBall.add(new Wait(driveTrain, 1f));
-		autoFourBall.add(new EncoderForwardFeet(driveTrain, 11.5f, 0.8f));
-		autoFourBall.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
-		autoFourBall.add(new Wait(driveTrain, 0.3f));
-		autoFourBall.add(new Shoot(shooter, indexer));
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
+		autoFourBallRed.add(new Wait(driveTrain, 1f));
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 11.5f, 0.8f));
+		autoFourBallRed.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
+		autoFourBallRed.add(new Shoot(shooter, indexer));
+
+		// FourBallBlue
+		autoFourBallBlue = new LinkedList<AutoStep>();
+		autoFourBallBlue.add(new Print("blue ran"));
+		autoFourBallBlue.add(new NavxReset(navx));
+		autoFourBallBlue.add(new IntakeDrop(intakeSolenoid, true));
+		autoFourBallBlue.add(new IntakeRun(intakeSeven, 0.8f));
+		// pickup first ball
+		autoFourBallBlue.add(new EncoderForward(driveTrain, 53898, -0.4f));
+		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 1, -0.4f));
+		// move forward towards goal
+		//autoFourBall.add(new EncoderForward(driveTrain, 2500, 0.35f)); // 55000 .2
+		autoFourBallBlue.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		autoFourBallBlue.add(new Wait(driveTrain, 0.3f));
+		// shoot
+		autoFourBallBlue.add(new Shoot(shooter, indexer));
+		//TODO
+		autoFourBallBlue.add(new NavxTurn(driveTrain, navx, 17f, 0.15f, 3.0f));// -speed 14
+		// autoFourBall.add(new Wait(driveTrain, 0.5f));
+		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
+		autoFourBallBlue.add(new Wait(driveTrain, 1f));
+		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 11.5f, 0.8f));
+		autoFourBallBlue.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		autoFourBallBlue.add(new Wait(driveTrain, 0.3f));
+		autoFourBallBlue.add(new Shoot(shooter, indexer));
 
 		// auto test
 		autoTest = new LinkedList<AutoStep>();
-		autoTest.add(new Shoot(shooter, indexer));
+		autoTest.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		autoTest.add(new Wait(driveTrain, 0.1f));
+		autoTest.add(new Wait(driveTrain, 0.1f));
+
+
 		// autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
 
 		double autoChoice = SmartDashboard.getNumber(autoSelectKey, 0);
 		boolean TwoBall = SmartDashboard.getBoolean("TwoBall", false);
-		boolean FourBall = SmartDashboard.getBoolean("FourBall", false);
+		boolean FourBallRed = SmartDashboard.getBoolean("FourBallRed", false);
+		boolean FourBallBlue = SmartDashboard.getBoolean("FourBallBlue", false);
 		boolean Test = SmartDashboard.getBoolean("Test", false);
 
 		if (Test) {
 			autonomousSelected = autoTest;
-		} else if (FourBall) {
-			autonomousSelected = autoFourBall;
+		} else if (FourBallRed) {
+			autonomousSelected = autoFourBallRed;
+		} else if (FourBallBlue) {
+			autonomousSelected = autoFourBallBlue; 
 		} else {
 			autonomousSelected = autoTwoBall;
 		}
@@ -264,9 +302,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopInit() {
-		SmartDashboard.putBoolean("TwoBall", false);
-		SmartDashboard.putBoolean("FourBall", false);
-		SmartDashboard.putBoolean("Test", false);
+
 		climber.errorSet();
 		// navx.reset();
 		limelight.SetLight(false);
@@ -360,7 +396,7 @@ public class Robot extends TimedRobot {
 			// get target distance from limelight
 			// run indexer
 			float buffer = 0.03f;//0.02
-			float speed = 0.6f;
+			float speed = 0.9f;
 			if (operator.getRawButton(7)) {
 				indexer.RunManualForward(speed, buffer);
 			}
@@ -421,6 +457,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void testInit() {
+		
 
 		// navx.reset();
 		// climber.coastMode();
@@ -453,13 +490,13 @@ public class Robot extends TimedRobot {
 	NavxTurnPID testTurn = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
 
 	public void testPeriodic() {
-		System.out.println(navx.getYaw() + "yaw");
+		// System.out.println(navx.getYaw() + "yaw");
 		// System.out.println(climberOne.getSelectedSensorPosition());
 
 		// System.out.println((climberTwo.getSelectedSensorPosition() + "climber two"));
 		// System.out.println((climberOne.getSelectedSensorPosition() + "climber one"));
 
-		// System.out.println("first " + indexer.firstBeam.get() + " second " + indexer.secondBeam.get());
+		System.out.println("first " + indexer.firstBeam.get() + " second " + indexer.secondBeam.get());
 		// indexer.secondBeam.get());
 
 		driveTrain.SetBothSpeed(0);

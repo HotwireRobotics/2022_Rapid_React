@@ -8,6 +8,7 @@ import frc.robot.Limelight;
 
 public class LimelightTrack extends AutoStep {
 
+    public Timer limeTimer;
     public DriveTrain driveTrain;
     public Shooter shooter;
     public Limelight limelight;
@@ -22,12 +23,20 @@ public class LimelightTrack extends AutoStep {
     }
 
     public void Begin() {
-
+        limeTimer = new Timer();
+        limeTimer.reset();
+        limeTimer.start();
     }
 
     public void Update() {
+        
+
+        if (limeTimer.get() > 1.5f) {
+            isDone = true;
+        }
 
         runShooter = true;
+
 
         limelight.Position(driveTrain);
         if (limelight.OnTarget() && driveTrain.GetEncoderSpeed() == 0) {

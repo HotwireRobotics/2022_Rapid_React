@@ -447,17 +447,6 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "4,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Toggle Switch",
-              "_source0": "network_table:///SmartDashboard/FourBall",
-              "_title": "SmartDashboard/FourBall"
-            }
-          },
           "2,0": {
             "size": [
               2,
@@ -478,6 +467,28 @@
               "_type": "Toggle Switch",
               "_source0": "network_table:///SmartDashboard/Test",
               "_title": "SmartDashboard/Test"
+            }
+          },
+          "4,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/FourBallBlue",
+              "_title": "SmartDashboard/FourBallBlue"
+            }
+          },
+          "4,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Toggle Switch",
+              "_source0": "network_table:///SmartDashboard/FourBallRed",
+              "_title": "SmartDashboard/FourBallRed"
             }
           }
         }
