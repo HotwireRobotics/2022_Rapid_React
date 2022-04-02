@@ -6,16 +6,16 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 
 public class Shooter {
+    public float sppeed = 0;
 
     public TalonSRX shooterTwo = new TalonSRX(6);
     public TalonSRX shooterFive = new TalonSRX(50);
 
     public Limelight limelight;
     public PreShooterpid preshooterpid;
-    public double shooterP = 0.0001;
+    public double shooterP = 0.0002;
     public double shooterI = 0.0004;
     public double shooterD = 0.0;
-    
 
     public HotPID pid;
 
@@ -27,12 +27,12 @@ public class Shooter {
 
     public Shooter(Limelight limelight, PreShooterpid preshooterpid) {
 
-
         this.limelight = limelight;
         this.preshooterpid = preshooterpid;
     }
 
     public void Init() {
+        SmartDashboard.putNumber("Shooter Rot Target", sppeed);
         SmartDashboard.putNumber("ShooterP", shooterP);
         SmartDashboard.putNumber("ShooterI", shooterI);
         SmartDashboard.putNumber("ShooterD", shooterD);
@@ -40,15 +40,14 @@ public class Shooter {
         shooterI = SmartDashboard.getNumber("ShooterI", shooterI);
         shooterD = SmartDashboard.getNumber("ShooterD", shooterD);
 
-
         pid = new HotPID("shooter", shooterP, shooterI, shooterD);
     }
 
     public void Reset() {
+        sppeed = (float) SmartDashboard.getNumber("Shooter Rot Target", sppeed);
 
         pid.reset();
     }
-    
 
     public void Update() {
 
@@ -57,30 +56,49 @@ public class Shooter {
         // preshooterpid.preRpmTarget = 3000;
         // } else if (limelight.gety() > -100) {
         System.out.println("Second zone");
-        rpmTarget = 1650;// 2750 act 2650//2000far//1800//mid bumper line1600,2000
-        preshooterpid.preRpmTarget = 2000;// 1800far
+        // rpmTarget = 1650;// 2750 act 2650//2000far//1800//mid bumper line1600,2000
+        // preshooterpid.preRpmTarget = 2000;// 1800far
         // } else {
         // rpmTarget = 2150;
         // preshooterpid.preRpmTarget = 4000;
         // // rpmTarget = 2700;
         // // preshooterpid.preRpmTarget = 2222;
-        // }
+        // // }
+        // float nearY =35.7f;//16
+        // float farY = 19f;//20.7
 
-        float nearY =35.7f;//16
-        float farY = 19f;//20.7
+        float nearY = 34.8f;// (34.8, 1600) 2221*0.982^dist
+        // 2 ft spacing (28.3, 1700)
+        // 2 ft spacing (23.6, 1850)
+        // 2 ft spacing (19.7, 2000)
+        // 2 ft spacing (17, 2150)
+        // 2 ft spacing (15 , 2300)
+        float farY = 15f;// 20.7
 
         float dist = Math.abs(farY - nearY);
-        float relDist = Math.abs((float)limelight.gety() - nearY) / dist;
+        float distT = (float) limelight.gety() - 15.0f;
+        float distCurve = (1.546f * (distT * distT)) - (65.06f * distT) + 2286.0f;
+        float relDist = distCurve;
 
         // shooter
-        float nearShooterRPM = 1600;//1650
-        float farShooterRPM = 2100;//hangar//2100//2050
-        float shooterSpeed = Lerp(nearShooterRPM, farShooterRPM, relDist);
-        rpmTarget = shooterSpeed;
 
+        float nearShooterRPM = 1600;// 1600//1400
+        float farShooterRPM = 2300;// hangar//2100//2050
+
+        // float shooterSpeed = Lerp(nearShooterRPM, farShooterRPM, relDist);
+
+        if ((limelight.GetArea() == 0)) {
+            rpmTarget = 1900;
+        } else {
+            if (limelight.gety() < 15) {
+                rpmTarget = 2300;
+            } else {
+                rpmTarget = relDist;
+            }
+        }
         // preshooter
-        float nearPreRPM = 1700;
-        float farPreRPM = 1800;//1817
+        float nearPreRPM = 1700;// 1700
+        float farPreRPM = 1800;// 1817
         float preShooterSpeed = Lerp(nearPreRPM, farPreRPM, relDist);
         preshooterpid.preRpmTarget = preShooterSpeed;
 

@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 public class Indexer {
     public int ballCountD;
     public int ballCount = 0;
+    public boolean firstShot = true;
 
     public boolean firstInitialTrigger = false;
 
@@ -29,7 +30,7 @@ public class Indexer {
     boolean didPause = true;
     boolean shooting = false;
     Timer timer = new Timer();
-    boolean toggle2 = true;
+    boolean toggle2 = false;
 
     private float pauseTime = 0.2f;
 
@@ -41,33 +42,31 @@ public class Indexer {
         ballCountD = 0;
     }
     public void RunManualForward(float speed, float RPMBuffer) {
-        ballCount = 0;
- 
-        SmartDashboard.putNumber("ball counter", ballCountD);
-        indexerMotor.setNeutralMode(NeutralMode.Brake);
         boolean upToSpeed = shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer);
-        if (!secondBeam.get() && toggle2){
-            toggle2 = false;
+        ballCount = 0;
+        // firstShot = true;
+        if (!secondBeam.get()){
             timer.reset();
             timer.start();
         }
-
-        if (secondBeam.get()) {
-            
-            System.out.println(speed + " speed");
-
+        if (secondBeam.get()){
             toggle2 = true;
-            toggleencoder = false;
-            indexerMotor.set(ControlMode.PercentOutput, -speed);
-
-        } else if (timer.hasElapsed(0.25) && upToSpeed && (indexerMotor.getSelectedSensorVelocity() == 0) || toggleencoder) {
-            System.out.println("shooting!!!");
-            ballCountD = 0;
-            toggleencoder = true;
-            indexerMotor.set(ControlMode.PercentOutput, -speed);
-        } else {
+        }else if (toggle2 && !secondBeam.get() && timer.hasElapsed(0.1)){
+            firstShot = false;
             indexerMotor.set(ControlMode.PercentOutput, 0);
         }
+        if (firstShot && upToSpeed){
+            System.out.println("running");
+            indexerMotor.set(ControlMode.PercentOutput, -speed);
+        }else if (secondBeam.get() && timer.hasElapsed(0.15) &&upToSpeed){
+            indexerMotor.set(ControlMode.PercentOutput, -speed);
+            firstShot = true;
+        }else{
+            indexerMotor.set(ControlMode.PercentOutput, 0);
+        }
+        // } else {
+        //     indexerMotor.set(ControlMode.PercentOutput, 0);
+        // }
     }
 
     public void RunAutomatic() {

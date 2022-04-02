@@ -11,7 +11,7 @@ public class PreShooterpid {
     
     public Limelight limelight;
 
-    public double preshooterP = 0.0001;
+    public double preshooterP = 0.0002;
     public double preshooterI = 0.0004;
     public double preshooterD = 0.00001;
     public double preshooterRPMTarget;
