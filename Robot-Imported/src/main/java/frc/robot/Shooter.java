@@ -51,22 +51,6 @@ public class Shooter {
 
     public void Update() {
 
-        // if (limelight.gety() >= -1.9) {
-        // rpmTarget = 2000;
-        // preshooterpid.preRpmTarget = 3000;
-        // } else if (limelight.gety() > -100) {
-        System.out.println("Second zone");
-        // rpmTarget = 1650;// 2750 act 2650//2000far//1800//mid bumper line1600,2000
-        // preshooterpid.preRpmTarget = 2000;// 1800far
-        // } else {
-        // rpmTarget = 2150;
-        // preshooterpid.preRpmTarget = 4000;
-        // // rpmTarget = 2700;
-        // // preshooterpid.preRpmTarget = 2222;
-        // // }
-        // float nearY =35.7f;//16
-        // float farY = 19f;//20.7
-
         float nearY = 34.8f;// (34.8, 1600) 2221*0.982^dist
         // 2 ft spacing (28.3, 1700)
         // 2 ft spacing (23.6, 1850)
