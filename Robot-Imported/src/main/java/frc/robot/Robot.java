@@ -68,6 +68,8 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class Robot extends TimedRobot {
 
+    public boolean toggleReset = true;
+
 	// Sensors
 	public AHRS navx = new AHRS(SPI.Port.kMXP);
 
@@ -199,19 +201,21 @@ public class Robot extends TimedRobot {
 		autoFourBallRed.add(new IntakeDrop(intakeSolenoid, true));
 		autoFourBallRed.add(new IntakeRun(intakeSeven, 0.8f));
 		// pickup first ball
-		autoFourBallRed.add(new EncoderForward(driveTrain, 53898, -0.4f));
-		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 1, -0.4f));
+		autoFourBallRed.add(new EncoderForward(driveTrain, 65296, -0.8f));
 		// move forward towards goal
 		// autoFourBall.add(new EncoderForward(driveTrain, 2500, 0.35f)); // 55000 .2
 		autoFourBallRed.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		// shoot
 		autoFourBallRed.add(new Shoot(shooter, indexer));
-		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 16f, 0.15f, 3.0f));// -speed 14
+		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 13f, 0.2f, 2.0f));// -speed 14.15
 		// autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
+		// autoFourBallRed.add(new NavxTurn(driveTrain, navx, -20f, 0.2f, 5f));// -speed 14.15
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 1.0f, 0.8f));
 		autoFourBallRed.add(new Wait(driveTrain, 1f));
-		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 11.5f, 0.8f));
+		// autoFourBallRed.add(new NavxTurn(driveTrain, navx, 0f, 0.2f, 5f));// -speed 14.15
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 7f, 0.8f));
 		autoFourBallRed.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		autoFourBallRed.add(new Shoot(shooter, indexer));
@@ -223,8 +227,7 @@ public class Robot extends TimedRobot {
 		autoFourBallBlue.add(new IntakeDrop(intakeSolenoid, true));
 		autoFourBallBlue.add(new IntakeRun(intakeSeven, 0.8f));
 		// pickup first ball
-		autoFourBallBlue.add(new EncoderForward(driveTrain, 53898, -0.4f));
-		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 1, -0.4f));
+		autoFourBallBlue.add(new EncoderForward(driveTrain, 65296, -0.8f));
 		// move forward towards goal
 		// autoFourBall.add(new EncoderForward(driveTrain, 2500, 0.35f)); // 55000 .2
 		autoFourBallBlue.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
@@ -232,11 +235,12 @@ public class Robot extends TimedRobot {
 		// shoot
 		autoFourBallBlue.add(new Shoot(shooter, indexer));
 		// TODO
-		autoFourBallBlue.add(new NavxTurn(driveTrain, navx, 17f, 0.15f, 3.0f));// -speed 14
+		autoFourBallBlue.add(new NavxTurn(driveTrain, navx, 17f, 0.2f, 3.0f));// -speed 14
 		// autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
+		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 1f, 0.8f));
 		autoFourBallBlue.add(new Wait(driveTrain, 1f));
-		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 11.5f, 0.8f));
+		autoFourBallBlue.add(new EncoderForwardFeet(driveTrain, 7f, 0.8f));
 		autoFourBallBlue.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		autoFourBallBlue.add(new Wait(driveTrain, 0.3f));
 		autoFourBallBlue.add(new Shoot(shooter, indexer));
@@ -390,8 +394,8 @@ public class Robot extends TimedRobot {
 
 		int shootButton = 5;
 		if (operator.getRawButtonReleased(shootButton)) {
-			shooter.Reset();
-			preshooterpid.Reset();
+			// shooter.Reset();
+			// preshooterpid.Reset();
 		} else {
 
 			if (operator.getRawButtonPressed(9)) {
@@ -411,11 +415,12 @@ public class Robot extends TimedRobot {
 			}
 		}
 		if (operator.getRawButton(shootButton)) {
+			toggleReset = true;
 			shooter.Update();
 			// get target distance from limelight
 			// run indexer
 			float buffer = 0.035f;// 0.02
-			float speed = 0.9f;
+			float speed = 0.6f;
 			indexer.RunManualForward(speed, buffer);
 
 		} else {
@@ -423,12 +428,17 @@ public class Robot extends TimedRobot {
 			// shooter.PowerManual(0);
 
 			if (operator.getRawButton(7) && indexer.secondBeam.get()) {
+				if (toggleReset){
+					toggleReset = false;
+				shooter.Reset();
+				preshooterpid.preshooterPid.reset();
+				}
 				indexer.RunAutomatic();
 			} else if (operator.getRawButton(1)) {
 				indexer.resetBallCountD();
 				indexerMotor.set(ControlMode.PercentOutput, 0.6f);
-				shooter.pid.reset();
-				preshooterpid.preshooterPid.reset();
+				// shooter.pid.reset();
+				// preshooterpid.preshooterPid.reset();
 			} else {
 				indexer.RunManualForward(0, 0);
 			}
@@ -554,8 +564,8 @@ public class Robot extends TimedRobot {
 			// tank
 			float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.linear);
 			float rightJoystick = DriveScaleSelector((float) flightStickRight.getRawAxis(1), DriveScale.linear);
-			driveTrain.SetRightSpeed(-rightJoystick);
-			driveTrain.SetLeftSpeed(-leftJoystick);
+			driveTrain.SetRightSpeed((-rightJoystick));
+			driveTrain.SetLeftSpeed((-leftJoystick));
 
 			// driveTrain.SetRightSpeed(leftJoystick);
 			// driveTrain.SetLeftSpeed(rightJoystick);

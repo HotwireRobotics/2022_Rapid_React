@@ -26,6 +26,7 @@ public class Wait extends AutoStep {
 
     public void Update() {
         if (driveTimer.get() > length) {
+            System.out.println("is it printing");
             isDone = true;
         }
     }

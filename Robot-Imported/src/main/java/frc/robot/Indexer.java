@@ -56,7 +56,6 @@ public class Indexer {
             indexerMotor.set(ControlMode.PercentOutput, 0);
         }
         if (firstShot && upToSpeed){
-            System.out.println("running");
             indexerMotor.set(ControlMode.PercentOutput, -speed);
         }else if (secondBeam.get() && timer.hasElapsed(0.15) &&upToSpeed){
             indexerMotor.set(ControlMode.PercentOutput, -speed);
@@ -67,6 +66,7 @@ public class Indexer {
         // } else {
         //     indexerMotor.set(ControlMode.PercentOutput, 0);
         // }
+        System.out.println(speed);
     }
 
     public void RunAutomatic() {

@@ -13,7 +13,7 @@ public class Limelight {
 
     private float targetBuffer = 3f;
 
-    public double p = 0.03;//0.04
+    public double p = 0.03;//0.04// late 0.03
     public double i = 0.005;
     public double d = 0.005;//0.001
 
@@ -72,7 +72,7 @@ public class Limelight {
             double x = Math.abs(tx.getDouble(0.0));
             return x < targetBuffer;
         }
-
+        pid.reset();
         return true;
     }
 

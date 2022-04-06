@@ -581,6 +581,149 @@
               "_source0": "network_table:///SmartDashboard/shooter_D",
               "_title": "/SmartDashboard/shooter_D"
             }
+          },
+          "7,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/preShooter_P",
+              "_title": "/SmartDashboard/preShooter_P"
+            }
+          },
+          "8,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/ShooterP",
+              "_title": "/SmartDashboard/ShooterP"
+            }
+          },
+          "8,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/ShooterI",
+              "_title": "/SmartDashboard/ShooterI"
+            }
+          },
+          "8,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/ShooterD",
+              "_title": "/SmartDashboard/ShooterD"
+            }
+          },
+          "9,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/preShooter_P",
+              "_title": "/SmartDashboard/preShooter_P"
+            }
+          },
+          "9,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/preShooter_I",
+              "_title": "/SmartDashboard/preShooter_I"
+            }
+          },
+          "9,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/preShooter_D",
+              "_title": "/SmartDashboard/preShooter_D"
+            }
+          },
+          "8,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter_RPM",
+              "_title": "/SmartDashboard/Shooter_RPM"
+            }
+          },
+          "9,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/preShooter_RPM",
+              "_title": "/SmartDashboard/preShooter_RPM"
+            }
+          },
+          "9,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/preShooter_RPMTarget",
+              "_title": "/SmartDashboard/preShooter_RPMTarget"
+            }
+          },
+          "8,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/shooter_setpoint",
+              "_title": "/SmartDashboard/shooter_setpoint"
+            }
+          },
+          "3,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter Rot Target",
+              "_title": "/SmartDashboard/Shooter Rot Target"
+            }
+          },
+          "5,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Shooter Rot Target",
+              "_title": "/SmartDashboard/Shooter Rot Target"
+            }
           }
         }
       }
