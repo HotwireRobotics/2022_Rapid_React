@@ -42,7 +42,8 @@ public class Shoot extends AutoStep {
     public void Update() {
         System.out.println(ballcount + " ballcount");
         // Timer for override
-        if (balltimer.get() > 5) {
+
+        if (balltimer.get() > 4) {
             isDone = true;
         }
 
@@ -56,8 +57,13 @@ public class Shoot extends AutoStep {
         if (ballcount == 2) {
             isDone = true;
         } else {
-            shooter.Update();
-            indexer.RunManualForward(0.6f, 0.03f);
+            if (balltimer.get() > 2 && balltimer.get() < 2.1) {
+                System.out.println("ran back");
+                indexer.RunManualForward(-1.0f, 1.0f);
+            } else {
+                shooter.Update();
+                indexer.RunManualForward(0.6f, 0.03f);
+            }
         }
     }
 }
