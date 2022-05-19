@@ -111,6 +111,25 @@ public class Robot extends TimedRobot {
 	public TalonSRX climberTwo = new TalonSRX(52);
 
 	// Motors
+
+	//Swervy Auto Stuff
+	    // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
+    // These characterization values MUST be determined either experimentally or theoretically
+    // for *your* robot's drive.
+    // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
+    // values for your robot.
+
+    public static final double ksVolts = 0.22;
+    public static final double kvVoltSecondsPerMeter = 1.98;
+    public static final double kaVoltSecondsSquaredPerMeter = 0.2;
+    // Example value only - as above, this must be tuned for your drive!
+    public static final double kPDriveVel = 8.5;
+
+	//TODO
+    // public static final double kTrackwidthMeters = 0.69;
+    // public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+
+	
 	public boolean opToggle;
 	// public TalonSRX forTesting = new TalonSRX(51);
 	public TalonSRX intakeSeven = new TalonSRX(2);
@@ -212,16 +231,17 @@ public class Robot extends TimedRobot {
 		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		// shoot
 		autoFourBallRed.add(new Shoot(shooter, indexer));
-		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 11f, 0.15f, 2.0f));// -speed 14.15
+		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 12f, 0.15f, 2.0f));// -speed 14.15c
 		// autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
 		// autoFourBallRed.add(new NavxTurn(driveTrain, navx, -20f, 0.2f, 5f));// -speed
 		// 14.15
-		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 2.0f, 0.8f));
-		autoFourBallRed.add(new Wait(driveTrain, 1f));
+		autoFourBallRed.add(new NavxTurn(driveTrain, navx, -5, 0.25f, 5.0f));// added
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 2f, 0.8f));
+		autoFourBallRed.add(new Wait(driveTrain, 0.8f));
 		// autoFourBallRed.add(new NavxTurn(driveTrain, navx, 0f, 0.2f, 5f));// -speed
 		// 14.15
-		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 6f, 0.8f));
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 9f, 0.8f));//6
 		autoFourBallRed.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		autoFourBallRed.add(new Shoot(shooter, indexer));
@@ -253,6 +273,16 @@ public class Robot extends TimedRobot {
 
 		// auto test
 		autoTest = new LinkedList<AutoStep>();
+		autoTest.add(new NavxReset(navx));
+		autoTest.add(new EncoderForwardFeet(driveTrain, 5f, -0.3f));
+		autoTest.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
+		autoTest.add(new Wait(driveTrain, 0.3f));
+		autoTest.add(new Shoot(shooter, indexer));
+		autoTest.add(new NavxTurn(driveTrain, navx, 0f, 0.15f, 3.0f));// -speed 14
+		autoTest.add(new EncoderForwardFeet(driveTrain, 5f, 0.3f));
+
+
+
 
 		// autoTest.add(new NavxReset(navx));
 		// autoTest.add(new Wait(driveTrain, 3f));

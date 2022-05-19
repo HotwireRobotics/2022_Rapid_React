@@ -42,7 +42,8 @@ public class Indexer {
         ballCountD = 0;
     }
     public void RunManualForward(float speed, float RPMBuffer) {
-        boolean upToSpeed = shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer);
+        indexerMotor.setNeutralMode(NeutralMode.Brake);
+        boolean upToSpeed = shooter.UpToSpeed(RPMBuffer) && preShooter.UpToSpeed(RPMBuffer * 1.5f);
         ballCount = 0;
         // firstShot = true;
         if (!secondBeam.get()){
@@ -70,6 +71,7 @@ public class Indexer {
     }
 
     public void RunAutomatic() {
+        indexerMotor.setNeutralMode(NeutralMode.Brake);
         SmartDashboard.putNumber("ball counter", ballCountD);
         toggleencoder = false;
         if (secondBeam.get()) {
