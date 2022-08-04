@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
@@ -28,6 +29,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.Joystick.AxisType;
 import edu.wpi.first.wpilibj.buttons.POVButton;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.AnalogGyro;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.AnalogPotentiometer;
 import com.kauailabs.navx.frc.AHRS;
@@ -36,6 +39,10 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.RobotState;
 import frc.robot.autostep.*;
 import edu.wpi.first.wpilibj.Compressor;
@@ -67,10 +74,12 @@ import edu.wpi.first.wpilibj.util.Color;
 //	Left:
 
 public class Robot extends TimedRobot {
+	public double trackWidth = 0.61;
 
 	public boolean toggleReset = true;
 
 	// Sensors
+	public AnalogGyro headinGryo = new AnalogGyro(0);
 	public AHRS navx = new AHRS(SPI.Port.kMXP);
 
 	// private ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
@@ -80,12 +89,20 @@ public class Robot extends TimedRobot {
 	// public Encoder shooterEncoder = new Encoder();
 
 	// Drivetrain
+	DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(new Rotation2d(headinGryo.getAngle())); 
+
 	public DriveTrain driveTrain = new DriveTrain(54, 55, 56, 57, navx);
+	public TalonSRX frontLeft = new TalonSRX(54);
+	public TalonSRX backLeft = new TalonSRX(55);
+	public TalonSRX frontRight = new TalonSRX(56);
+	public TalonSRX backRight = new TalonSRX(57);
+
 
 	// Nuemataics
 	public DoubleSolenoid intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
 
 	// Logic
+	public SimpleMotorFeedforward preShooterFeed = new SimpleMotorFeedforward(0.48691, 0.11446, 0.015037);
 	public boolean indexToggle = true;
 	public boolean indexToggle2 = true;
 
@@ -113,21 +130,10 @@ public class Robot extends TimedRobot {
 	// Motors
 
 	//Swervy Auto Stuff
-	    // These are example values only - DO NOT USE THESE FOR YOUR OWN ROBOT!
-    // These characterization values MUST be determined either experimentally or theoretically
-    // for *your* robot's drive.
-    // The Robot Characterization Toolsuite provides a convenient tool for obtaining these
-    // values for your robot.
 
-    public static final double ksVolts = 0.22;
-    public static final double kvVoltSecondsPerMeter = 1.98;
-    public static final double kaVoltSecondsSquaredPerMeter = 0.2;
-    // Example value only - as above, this must be tuned for your drive!
-    public static final double kPDriveVel = 8.5;
 
-	//TODO
-    // public static final double kTrackwidthMeters = 0.69;
-    // public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(kTrackwidthMeters);
+   
+ 
 
 	
 	public boolean opToggle;
@@ -164,6 +170,10 @@ public class Robot extends TimedRobot {
 
 	public String autoSelectKey = "autoMode";
 
+	public float voltComp(float percent) {
+			return (float) (12.6 * percent / RobotController.getBatteryVoltage());
+	}
+
 	public void robotInit() {
 		SmartDashboard.putNumber("Ballcount", 0);
 		SmartDashboard.putBoolean("TwoBall", false);
@@ -177,6 +187,10 @@ public class Robot extends TimedRobot {
 		preshooterpid.Init();
 		SmartDashboard.putNumber(autoSelectKey, 0);
 
+	}
+	public void periodic() {
+		var heading = Rotation2d.fromDegrees(headinGryo.getAngle());
+		
 	}
 
 	public void disabledInit() {
@@ -416,6 +430,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
+		System.out.println(headinGryo.getAngle() + "amgle");
 		if(indexToggle && indexer.firstBeam.get()){
 			indexToggle = false;
 			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0))+1));
@@ -501,7 +516,7 @@ public class Robot extends TimedRobot {
 				if (toggleReset) {
 					toggleReset = false;
 					shooter.Reset();
-					preshooterpid.preshooterPid.reset();
+					// preshooterpid.preshooterPid.reset();
 				}
 				indexer.RunAutomatic();
 			} else if (operator.getRawButton(1)) {
@@ -555,7 +570,9 @@ public class Robot extends TimedRobot {
 	}
 
 	public void testInit() {
-
+		
+		
+		
 		// navx.reset();
 		// climber.coastMode();
 
@@ -587,17 +604,21 @@ public class Robot extends TimedRobot {
 	NavxTurnPID testTurn = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
 
 	public void testPeriodic() {
+
+		frontLeft.getSelectedSensorPosition();
+
+
+		preShooterFive.set(ControlMode.PercentOutput, (preShooterFeed.calculate(15, 100)/RobotController.getBatteryVoltage()));
+
+
+		// System.out.println(preShooterFive.getSelectedSensorVelocity()/2048*8.19 + "Calc");
+		// System.out.println(preShooterFive.getSelectedSensorVelocity()/2048*600 + "RPM");
+		// preShooterFive.set(ControlMode.PercentOutput, 0);
 		SmartDashboard.putNumber("Shooter Rot Target", 0);
-		preshooterpid.PowerManual(0);
+		
 		shooter.PowerManual(0);
-		// System.out.println(navx.getYaw() + "yaw");
-		// System.out.println(climberOne.getSelectedSensorPosition());
-
-		// System.out.println((climberTwo.getSelectedSensorPosition() + "climber two"));
-		// System.out.println((climberOne.getSelectedSensorPosition() + "climber one"));
-
-		System.out.println("first " + indexer.firstBeam.get() + " second " + indexer.secondBeam.get());
-		// indexer.secondBeam.get());
+		System.out.println(frontLeft.getSelectedSensorPosition());
+	
 
 		driveTrain.SetBothSpeed(0);
 
@@ -633,8 +654,8 @@ public class Robot extends TimedRobot {
 			// driveTrain.SetCoast();
 		} else {
 			// tank
-			float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.linear);
-			float rightJoystick = DriveScaleSelector((float) flightStickRight.getRawAxis(1), DriveScale.linear);
+			float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.parabala);
+			float rightJoystick = (DriveScaleSelector((float) flightStickRight.getRawAxis(1), DriveScale.parabala));
 			driveTrain.SetRightSpeed((-rightJoystick));
 			driveTrain.SetLeftSpeed((-leftJoystick));
 

@@ -39,7 +39,7 @@ public class LimelightTrack extends AutoStep {
 
 
         limelight.Position(driveTrain);
-        if (limelight.OnTarget() && driveTrain.GetEncoderSpeed() == 0) {
+        if (limelight.OnTarget() && driveTrain.getEncoderSpeed() == 0) {
             limelight.reset();
             isDone = true;
         }

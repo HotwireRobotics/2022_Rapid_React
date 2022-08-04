@@ -36,7 +36,7 @@ public class NavxTurn extends AutoStep {
         if (degreeDifference < goodEnoughDeg) {
             driveTrain.SetLeftSpeed(0);
             driveTrain.SetRightSpeed(0);
-            if (driveTrain.GetEncoderSpeed() == 0) {
+            if (driveTrain.getEncoderSpeed() == 0) {
                 isDone = true;
             }
         }else{

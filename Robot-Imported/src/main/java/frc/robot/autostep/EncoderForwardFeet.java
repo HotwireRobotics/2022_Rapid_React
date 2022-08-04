@@ -25,13 +25,13 @@ public class EncoderForwardFeet extends AutoStep {
 
     public void Begin() {
         driveTrain.SetBothSpeed(speed);
-        encoderStart = driveTrain.GetEncoder();
+        encoderStart = driveTrain.getEncoder();
         dir = speed / Math.abs(speed);
     }
 
     public void Update() {
         encoderTarget = encoderTargetFeet * adjuster;
-        double currentError = Math.abs(encoderStart - driveTrain.GetEncoder());
+        double currentError = Math.abs(encoderStart - driveTrain.getEncoder());
         if (encoderTarget-currentError < 48000) {
             driveTrain.SetBothSpeed(0.2f * dir);
         }
@@ -39,7 +39,7 @@ public class EncoderForwardFeet extends AutoStep {
             isDone = true;
             driveTrain.SetBothSpeed(0.0f);
         }
-        System.out.println(encoderStart - driveTrain.GetEncoder());
+        System.out.println(encoderStart - driveTrain.getEncoder());
 
     }
 }

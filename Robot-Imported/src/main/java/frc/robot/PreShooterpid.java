@@ -50,7 +50,7 @@ public class PreShooterpid {
 
 
         preRpmCurrent = TalonVelocityToRPM((float)preShooterFive.getSelectedSensorVelocity());
-        
+        System.out.println(preRpmCurrent);
 
         // Shooter code pid
         SmartDashboard.putNumber("preShooter_RPM", preRpmCurrent);
@@ -98,3 +98,6 @@ public class PreShooterpid {
         return Math.abs(rpm);
     }
 }
+
+
+

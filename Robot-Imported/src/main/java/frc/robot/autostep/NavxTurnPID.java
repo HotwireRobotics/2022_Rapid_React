@@ -1,3 +1,4 @@
+
 package frc.robot.autostep;
 
 import com.kauailabs.navx.frc.AHRS;
@@ -34,7 +35,7 @@ public class NavxTurnPID extends AutoStep {
         if (degreeDifference < goodEnoughDeg) {
             driveTrain.SetLeftSpeed(0);
             driveTrain.SetRightSpeed(0);
-            if (driveTrain.GetEncoderSpeed() == 0) {
+            if (driveTrain.getEncoderSpeed() == 0) {
                 isDone = true;
             }
         }
