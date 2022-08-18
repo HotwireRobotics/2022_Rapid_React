@@ -646,18 +646,27 @@ public class Robot extends TimedRobot {
 			// float horJoystick = TranslateController((float) driver.getRawAxis(2));
 			// float verJoystick = TranslateController((float) driver.getRawAxis(1));
 
-			float horJoystick = DriveScaleSelector((float) driver.getRawAxis(2), DriveScale.cb);
-			float verJoystick = DriveScaleSelector((float) driver.getRawAxis(1), DriveScale.cb);
+			float horJoystick = DriveScaleSelector((float) driver.getRawAxis(2), DriveScale.parabala);
+			float verJoystick = DriveScaleSelector((float) driver.getRawAxis(1), DriveScale.parabala);
 
 			driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
 			driveTrain.SetLeftSpeed(-verJoystick + horJoystick);
 			// driveTrain.SetCoast();
 		} else {
 			// tank
-			float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.parabala);
-			float rightJoystick = (DriveScaleSelector((float) flightStickRight.getRawAxis(1), DriveScale.parabala));
-			driveTrain.SetRightSpeed((-rightJoystick));
-			driveTrain.SetLeftSpeed((-leftJoystick));
+			// float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.parabala);
+			// float rightJoystick = (DriveScaleSelector((float) flightStickRight.getRawAxis(1), DriveScale.parabala));
+			// driveTrain.SetRightSpeed((-rightJoystick));
+			// driveTrain.SetLeftSpeed((-leftJoystick));
+
+			float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.linear);
+			float rightJoystick = (DriveScaleSelector((float) flightStickRight.getRawAxis(0), DriveScale.linear));
+			
+			driveTrain.SetRightSpeed(-leftJoystick + -rightJoystick);
+			driveTrain.SetLeftSpeed(-leftJoystick + rightJoystick);
+			System.out.println("Right " + (-leftJoystick + -rightJoystick));
+			System.out.println("Left " + (-leftJoystick + rightJoystick));
+			driveTrain.Update();
 
 			// driveTrain.SetRightSpeed(leftJoystick);
 			// driveTrain.SetLeftSpeed(rightJoystick);
