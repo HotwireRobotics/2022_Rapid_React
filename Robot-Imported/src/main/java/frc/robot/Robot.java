@@ -217,6 +217,7 @@ public class Robot extends TimedRobot {
 		limelight.SetLight(true);
 
 		// Twoball outside
+		
 		autoTwoBall = new LinkedList<AutoStep>();
 		autoTwoBall.add(new NavxReset(navx));
 		autoTwoBall.add(new IntakeDrop(intakeSolenoid, true));
@@ -551,7 +552,7 @@ public class Robot extends TimedRobot {
 		}
 
 		// Lime Light
-		if (flightStickLeft.getRawButton(6) || driver.getRawButton(6)) {
+		if (flightStickLeft.getRawButton(2) || driver.getRawButton(6)) {
 			limelight.Position(driveTrain);
 			driveTrain.SetBreak();
 		} else {
