@@ -89,14 +89,13 @@ public class Robot extends TimedRobot {
 	// public Encoder shooterEncoder = new Encoder();
 
 	// Drivetrain
-	DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(new Rotation2d(headinGryo.getAngle())); 
+	DifferentialDriveOdometry m_odometry = new DifferentialDriveOdometry(new Rotation2d(headinGryo.getAngle()));
 
 	public DriveTrain driveTrain = new DriveTrain(54, 55, 56, 57, navx);
 	public TalonSRX frontLeft = new TalonSRX(54);
 	public TalonSRX backLeft = new TalonSRX(55);
 	public TalonSRX frontRight = new TalonSRX(56);
 	public TalonSRX backRight = new TalonSRX(57);
-
 
 	// Nuemataics
 	public DoubleSolenoid intakeSolenoid = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 4, 5);
@@ -129,13 +128,8 @@ public class Robot extends TimedRobot {
 
 	// Motors
 
-	//Swervy Auto Stuff
+	// Swervy Auto Stuff
 
-
-   
- 
-
-	
 	public boolean opToggle;
 	// public TalonSRX forTesting = new TalonSRX(51);
 	public TalonSRX intakeSeven = new TalonSRX(2);
@@ -171,7 +165,7 @@ public class Robot extends TimedRobot {
 	public String autoSelectKey = "autoMode";
 
 	public float voltComp(float percent) {
-			return (float) (12.6 * percent / RobotController.getBatteryVoltage());
+		return (float) (12.6 * percent / RobotController.getBatteryVoltage());
 	}
 
 	public void robotInit() {
@@ -188,9 +182,10 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber(autoSelectKey, 0);
 
 	}
+
 	public void periodic() {
 		var heading = Rotation2d.fromDegrees(headinGryo.getAngle());
-		
+
 	}
 
 	public void disabledInit() {
@@ -217,7 +212,7 @@ public class Robot extends TimedRobot {
 		limelight.SetLight(true);
 
 		// Twoball outside
-		
+
 		autoTwoBall = new LinkedList<AutoStep>();
 		autoTwoBall.add(new NavxReset(navx));
 		autoTwoBall.add(new IntakeDrop(intakeSolenoid, true));
@@ -256,7 +251,7 @@ public class Robot extends TimedRobot {
 		autoFourBallRed.add(new Wait(driveTrain, 0.8f));
 		// autoFourBallRed.add(new NavxTurn(driveTrain, navx, 0f, 0.2f, 5f));// -speed
 		// 14.15
-		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 9f, 0.8f));//6
+		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 9f, 0.8f));// 6
 		autoFourBallRed.add(new LimelightTrack(driveTrain, shooter, limelight, 0));
 		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		autoFourBallRed.add(new Shoot(shooter, indexer));
@@ -296,13 +291,11 @@ public class Robot extends TimedRobot {
 		autoTest.add(new NavxTurn(driveTrain, navx, 0f, 0.15f, 3.0f));// -speed 14
 		autoTest.add(new EncoderForwardFeet(driveTrain, 5f, 0.3f));
 
-
-
-
 		// autoTest.add(new NavxReset(navx));
 		// autoTest.add(new Wait(driveTrain, 3f));
 		// autoTest.add(new Shoot(shooter, indexer));
-		// autoTest.add(new NavxTurn(driveTrain, navx, 11f, 0.15f, 2.0f));// -speed 14.15
+		// autoTest.add(new NavxTurn(driveTrain, navx, 11f, 0.15f, 2.0f));// -speed
+		// 14.15
 
 		// autoFourBall.add(new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID));
 
@@ -325,18 +318,18 @@ public class Robot extends TimedRobot {
 	}
 
 	public void autonomousPeriodic() {
-		if(indexToggle && indexer.firstBeam.get()){
+		if (indexToggle && indexer.firstBeam.get()) {
 			indexToggle = false;
-			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0))+1));
+			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0)) + 1));
 		}
-		if(!indexer.firstBeam.get()){
+		if (!indexer.firstBeam.get()) {
 			indexToggle = true;
 		}
-		if(indexToggle2 && indexer.secondBeam.get()){
+		if (indexToggle2 && indexer.secondBeam.get()) {
 			indexToggle2 = false;
-			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0))-1));
+			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0)) - 1));
 		}
-		if(!indexer.secondBeam.get()){
+		if (!indexer.secondBeam.get()) {
 			indexToggle2 = true;
 		}
 		SmartDashboard.putBoolean("RobotEnabled", true);
@@ -431,23 +424,23 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
+
 		System.out.println(headinGryo.getAngle() + "amgle");
-		if(indexToggle && indexer.firstBeam.get()){
+		if (indexToggle && indexer.firstBeam.get()) {
 			indexToggle = false;
-			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0))+1));
+			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0)) + 1));
 		}
-		if(!indexer.firstBeam.get()){
+		if (!indexer.firstBeam.get()) {
 			indexToggle = true;
 		}
-		if(indexToggle2 && indexer.secondBeam.get()){
+		if (indexToggle2 && indexer.secondBeam.get()) {
 			indexToggle2 = false;
-			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0))-1));
+			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0)) - 1));
 		}
-		if(!indexer.secondBeam.get()){
+		if (!indexer.secondBeam.get()) {
 			indexToggle2 = true;
 		}
 
-		
 		// System.out.println(navx.getYaw() + " yaw");
 		driveTrain.SendData();
 		SmartDashboard.putBoolean("RobotEnabled", true);
@@ -571,9 +564,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void testInit() {
-		
-		
-		
+
 		// navx.reset();
 		// climber.coastMode();
 
@@ -604,40 +595,74 @@ public class Robot extends TimedRobot {
 	// ffloat navxTarget;
 	NavxTurnPID testTurn = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
 
+	// DigitalInput beamTest = new DigitalInput(1);
+	// beamTest.get();
+	// intakeSeven.set(ControlMode.PercentOutput, 0.5f);
+	// flightStickLeft.getRawButtonPressed(0);
+
+	/*
+	 * - run intake when flight stick top button pressed
+	 * - unless the ball is in beam break then don't run the intake
+	 * - run intake backwards always, regardless of ball when trigger button is
+	 * pressed
+	 */
+	DigitalInput beamTest = new DigitalInput(1);
+
 	public void testPeriodic() {
+		if(beamTest.get()){ 
+			if (flightStickLeft.getRawButton(2)) {
+				intakeSeven.set(ControlMode.PercentOutput, 0.5f);
+			} else if(flightStickLeft.getRawButton(1)) {
+				intakeSeven.set(ControlMode.PercentOutput, -0.5f);
+			} else {
+				intakeSeven.set(ControlMode.PercentOutput, 0f);
+			}
 
-		frontLeft.getSelectedSensorPosition();
-
-
-		preShooterFive.set(ControlMode.PercentOutput, (preShooterFeed.calculate(15, 100)/RobotController.getBatteryVoltage()));
-
-
-		// System.out.println(preShooterFive.getSelectedSensorVelocity()/2048*8.19 + "Calc");
-		// System.out.println(preShooterFive.getSelectedSensorVelocity()/2048*600 + "RPM");
-		// preShooterFive.set(ControlMode.PercentOutput, 0);
-		SmartDashboard.putNumber("Shooter Rot Target", 0);
+		}
+		else {
+			intakeSeven.set(ControlMode.PercentOutput, 0f);
+		}
 		
-		shooter.PowerManual(0);
-		System.out.println(frontLeft.getSelectedSensorPosition());
+
 	
 
-		driveTrain.SetBothSpeed(0);
-
-		driveTrain.SetCoast();
-		climber.coastMode();
-
-		// forTesting.set(ControlMode.PercentOutput, 0.5f);
-		// limelight.SetLight(true);
-
-		if (flightStickLeft.getRawButtonPressed(0)) {
-			// navxTarget
-			navx.reset();
-			testTurn = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
-		}
-
-		// testTurn.Update();
-
-		UpdateMotors();
+		/*
+		 * frontLeft.getSelectedSensorPosition();
+		 * 
+		 * 
+		 * preShooterFive.set(ControlMode.PercentOutput, (preShooterFeed.calculate(15,
+		 * 100)/RobotController.getBatteryVoltage()));
+		 * 
+		 * 
+		 * // System.out.println(preShooterFive.getSelectedSensorVelocity()/2048*8.19 +
+		 * "Calc");
+		 * // System.out.println(preShooterFive.getSelectedSensorVelocity()/2048*600 +
+		 * "RPM");
+		 * // preShooterFive.set(ControlMode.PercentOutput, 0);
+		 * SmartDashboard.putNumber("Shooter Rot Target", 0);
+		 * 
+		 * shooter.PowerManual(0);
+		 * System.out.println(frontLeft.getSelectedSensorPosition());
+		 * 
+		 * 
+		 * driveTrain.SetBothSpeed(0);
+		 * 
+		 * driveTrain.SetCoast();
+		 * climber.coastMode();
+		 * 
+		 * // forTesting.set(ControlMode.PercentOutput, 0.5f);
+		 * // limelight.SetLight(true);
+		 * 
+		 * if (flightStickLeft.getRawButtonPressed(0)) {
+		 * // navxTarget
+		 * navx.reset();
+		 * testTurn = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
+		 * }
+		 * 
+		 * // testTurn.Update();
+		 * 
+		 * UpdateMotors();
+		 */
 	}
 
 	public void ControllerDrive() {
@@ -655,14 +680,16 @@ public class Robot extends TimedRobot {
 			// driveTrain.SetCoast();
 		} else {
 			// tank
-			// float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.parabala);
-			// float rightJoystick = (DriveScaleSelector((float) flightStickRight.getRawAxis(1), DriveScale.parabala));
+			// float leftJoystick = DriveScaleSelector((float)
+			// flightStickLeft.getRawAxis(1), DriveScale.parabala);
+			// float rightJoystick = (DriveScaleSelector((float)
+			// flightStickRight.getRawAxis(1), DriveScale.parabala));
 			// driveTrain.SetRightSpeed((-rightJoystick));
 			// driveTrain.SetLeftSpeed((-leftJoystick));
 
 			float leftJoystick = DriveScaleSelector((float) flightStickLeft.getRawAxis(1), DriveScale.linear);
 			float rightJoystick = (DriveScaleSelector((float) flightStickRight.getRawAxis(0), DriveScale.linear));
-			
+
 			driveTrain.SetRightSpeed(-leftJoystick + -rightJoystick);
 			driveTrain.SetLeftSpeed(-leftJoystick + rightJoystick);
 			System.out.println("Right " + (-leftJoystick + -rightJoystick));

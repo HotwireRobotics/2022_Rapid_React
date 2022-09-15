@@ -18,8 +18,8 @@ public class Indexer {
 
     public boolean firstInitialTrigger = false;
 
-    public DigitalInput firstBeam = new DigitalInput(1);
-    public DigitalInput secondBeam = new DigitalInput(0);
+    public DigitalInput firstBeam   = new DigitalInput(5);
+    public DigitalInput secondBeam = new DigitalInput(6);
 
     public TalonSRX indexerMotor = new TalonSRX(9);
 
