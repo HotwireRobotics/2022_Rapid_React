@@ -606,9 +606,10 @@ public class Robot extends TimedRobot {
 	 * - run intake backwards always, regardless of ball when trigger button is
 	 * pressed
 	 */
-	DigitalInput beamTest = new DigitalInput(1);
+	//DigitalInput beamTest = new DigitalInput(1);
 
 	public void testPeriodic() {
+		/*
 		if(beamTest.get()){ 
 			if (flightStickLeft.getRawButton(2)) {
 				intakeSeven.set(ControlMode.PercentOutput, 0.5f);
@@ -622,6 +623,7 @@ public class Robot extends TimedRobot {
 		else {
 			intakeSeven.set(ControlMode.PercentOutput, 0f);
 		}
+		*/
 		
 
 	
