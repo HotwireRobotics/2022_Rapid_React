@@ -595,20 +595,46 @@ public class Robot extends TimedRobot {
 	// ffloat navxTarget;
 	NavxTurnPID testTurn = new NavxTurnPID(driveTrain, navx, 10, 2.5f, navxPID);
 
-	// DigitalInput beamTest = new DigitalInput(1);
+	// DigitalInput beamFirst = new DigitalInput(1);
+	// DigitalInput beamSecond = new DigitalInput(0);
 	// beamTest.get();
 	// intakeSeven.set(ControlMode.PercentOutput, 0.5f);
 	// flightStickLeft.getRawButtonPressed(0);
+	// indexer.indexerMotor.set(ControlMode.PercentOutput, 0.5f);
 
 	/*
-	 * - run intake when flight stick top button pressed
-	 * - unless the ball is in beam break then don't run the intake
-	 * - run intake backwards always, regardless of ball when trigger button is
-	 * pressed
-	 */
-	//DigitalInput beamTest = new DigitalInput(1);
+		- when presseing stick top lower button run intake and indexer motors until the ball hits the top beam break
+		- when pressing trigger run all motors backwards to push a ball totally out
+
+		1. when button is pressed run motors
+		2. add in the beam break to stop the motors when its tripped
+		3. when trigger is pressed then run all motors backwards
+	*/
+	DigitalInput beamTest = new DigitalInput(0);
 
 	public void testPeriodic() {
+		double speed = (flightStickLeft.getRawAxis(3));
+		if(beamTest.get()){ 
+			if (flightStickLeft.getRawButton(2)) {
+				intakeSeven.set(ControlMode.PercentOutput, speed);
+			} else if(flightStickLeft.getRawButton(1)) {
+				intakeSeven.set(ControlMode.PercentOutput, -speed);
+			} else {
+				intakeSeven.set(ControlMode.PercentOutput, 0f);
+			}
+		} else {
+			intakeSeven.set(ControlMode.PercentOutput, 0f);
+		}
+		if (flightStickLeft.getRawButton(2)) {
+				indexer.indexerMotor.set(ControlMode.PercentOutput, -speed);
+			} else if(flightStickLeft.getRawButton(1)) {
+				indexer.indexerMotor.set(ControlMode.PercentOutput, speed);
+			} else {
+				indexer.indexerMotor.set(ControlMode.PercentOutput, 0f);
+		
+		}
+		
+		
 		/*
 		if(beamTest.get()){ 
 			if (flightStickLeft.getRawButton(2)) {
