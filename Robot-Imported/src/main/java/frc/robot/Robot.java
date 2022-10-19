@@ -258,7 +258,7 @@ public class Robot extends TimedRobot {
 
 		// FourBallBlue
 		autoFourBallBlue = new LinkedList<AutoStep>();
-		autoFourBallBlue.add(new Print("blue ran testing"));
+		autoFourBallBlue.add(new Print("blue ran"));
 		autoFourBallBlue.add(new NavxReset(navx));
 		autoFourBallBlue.add(new IntakeDrop(intakeSolenoid, true));
 		autoFourBallBlue.add(new IntakeRun(intakeSeven, 0.8f));
