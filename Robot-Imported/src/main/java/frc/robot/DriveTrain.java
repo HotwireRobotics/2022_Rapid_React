@@ -89,15 +89,15 @@ public class DriveTrain {
 	}
 
 	public double getEncoder() {
-		return joshmotorcontrollorLeftBottomOne.talon.getSelectedSensorPosition();
+		return joshmotorcontrollorLeftBottomTwo.talon.getSelectedSensorPosition();
 	}
 	public double getEncoderLeft() {
-		return joshmotorcontrollorLeftBottomOne.talon.getSelectedSensorPosition();
+		return joshmotorcontrollorLeftBottomTwo.talon.getSelectedSensorPosition();
 	}
 	public double getEncoderRight() {
 		return joshmotorcontrollorRightBottomOne.talon.getSelectedSensorPosition();
 	}
 	public double getEncoderSpeed() {
-		return joshmotorcontrollorLeftBottomOne.talon.getSelectedSensorVelocity();
+		return joshmotorcontrollorLeftBottomTwo.talon.getSelectedSensorVelocity();
 	}
 }

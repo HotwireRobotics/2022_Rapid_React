@@ -58,7 +58,7 @@ public class Shoot extends AutoStep {
             isDone = true;
         } else {
             if (balltimer.get() > 2 && balltimer.get() < 2.1) {
-                System.out.println("ran back");
+                //System.out.println("ran back");
                 indexer.RunManualForward(-1.0f, 1.0f);
             } else {
                 shooter.Update();

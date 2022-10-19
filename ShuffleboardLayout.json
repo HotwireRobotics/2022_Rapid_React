@@ -33,21 +33,7 @@
           "8,0": {
             "size": [
               2,
-              1
-            ],
-            "content": {
-              "_type": "Simple Dial",
-              "_source0": "network_table:///SmartDashboard/Ballcount",
-              "_title": "Ballcount",
-              "Range/Min": 0.0,
-              "Range/Max": 2.0,
-              "Visuals/Show value": true
-            }
-          },
-          "8,1": {
-            "size": [
-              2,
-              4
+              5
             ],
             "content": {
               "_type": "Boolean Box",
@@ -486,6 +472,15 @@
                   "_type": "PID Controller",
                   "_source0": "network_table:///LiveWindow/Ungrouped/PIDController[72]",
                   "_title": "PIDController[72]"
+                },
+                {
+                  "_type": "Gyro",
+                  "_source0": "network_table:///LiveWindow/Ungrouped/AnalogGyro[0]",
+                  "_title": "AnalogGyro[0]",
+                  "Visuals/Major tick spacing": 45.0,
+                  "Visuals/Starting angle": 180.0,
+                  "Visuals/Show tick mark ring": true,
+                  "Visuals/Counter clockwise": false
                 }
               ]
             }
@@ -504,7 +499,7 @@
         "vgap": 16.0,
         "titleType": 0,
         "tiles": {
-          "2,0": {
+          "4,0": {
             "size": [
               2,
               1
@@ -515,7 +510,7 @@
               "_title": "SmartDashboard/TwoBall"
             }
           },
-          "6,0": {
+          "8,3": {
             "size": [
               2,
               1
@@ -526,7 +521,7 @@
               "_title": "SmartDashboard/Test"
             }
           },
-          "4,1": {
+          "8,4": {
             "size": [
               2,
               1
@@ -537,7 +532,7 @@
               "_title": "SmartDashboard/FourBallBlue"
             }
           },
-          "4,0": {
+          "4,1": {
             "size": [
               2,
               1

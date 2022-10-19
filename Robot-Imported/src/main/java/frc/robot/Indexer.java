@@ -67,7 +67,7 @@ public class Indexer {
         // } else {
         //     indexerMotor.set(ControlMode.PercentOutput, 0);
         // }
-        System.out.println(speed);
+        //System.out.println(speed);
     }
 
     public void RunAutomatic() {
@@ -96,7 +96,7 @@ public class Indexer {
                     targetSpeed = 0.5f;
                 }
             }
-            System.out.println(targetSpeed + " target speed");
+            //System.out.println(targetSpeed + " target speed");
             indexerMotor.set(ControlMode.PercentOutput, -targetSpeed);
         } else {
             indexerMotor.set(ControlMode.PercentOutput, 0);

@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
 	public boolean speedToggle = false;
 
 	// Joysticks
-	public Joystick driver;
+	//public Joystick driver;
 	public Joystick operator;
 	public boolean arcadeDrive = false;
 	public Joystick flightStickLeft;
@@ -192,7 +192,7 @@ public class Robot extends TimedRobot {
 
 		// Controllers
 		driveTrain.SetBreak();
-		driver = new Joystick(0);
+		//driver = new Joystick(0);
 		operator = new Joystick(1);
 		flightStickLeft = new Joystick(3);
 		flightStickRight = new Joystick(2);
@@ -241,7 +241,7 @@ public class Robot extends TimedRobot {
 		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		// shoot
 		autoFourBallRed.add(new Shoot(shooter, indexer));
-		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 12f, 0.15f, 2.0f));// -speed 14.15c
+		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 14f, 0.15f, 2.0f));// -speed 14.15c
 		// autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
 		// autoFourBallRed.add(new NavxTurn(driveTrain, navx, -20f, 0.2f, 5f));// -speed
@@ -384,7 +384,7 @@ public class Robot extends TimedRobot {
 		driveTrain.SetCoast();
 
 		// Controllers
-		driver = new Joystick(0);
+		//driver = new Joystick(0);
 		operator = new Joystick(1);
 		flightStickLeft = new Joystick(3);
 		flightStickRight = new Joystick(2);
@@ -425,7 +425,6 @@ public class Robot extends TimedRobot {
 
 	public void teleopPeriodic() {
 
-		System.out.println(headinGryo.getAngle() + "amgle");
 		if (indexToggle && indexer.firstBeam.get()) {
 			indexToggle = false;
 			SmartDashboard.putNumber("Ballcount", ((SmartDashboard.getNumber("Ballcount", 0)) + 1));
@@ -545,19 +544,13 @@ public class Robot extends TimedRobot {
 		}
 
 		// Lime Light
-		if (flightStickLeft.getRawButton(2) || driver.getRawButton(6)) {
+		if (flightStickLeft.getRawButton(2)) {
 			limelight.Position(driveTrain);
 			driveTrain.SetBreak();
 		} else {
 			driveTrain.SetCoast();
 
-			if (flightStickLeft.getRawButton(0)) {
-				double output = turnPID.Calculate(navx.getYaw());
-				driveTrain.SetBothSpeed((float) output);
-				driveTrain.SetLeftSpeed((float) -output);
-			} else {
-				ControllerDrive();
-			}
+			ControllerDrive();
 		}
 
 		UpdateMotors();
@@ -569,7 +562,7 @@ public class Robot extends TimedRobot {
 		// climber.coastMode();
 
 		// Controllers
-		driver = new Joystick(0);
+		//driver = new Joystick(0);
 		operator = new Joystick(1);
 		flightStickLeft = new Joystick(3);
 		flightStickRight = new Joystick(2);
@@ -662,9 +655,14 @@ public class Robot extends TimedRobot {
 		 * }
 		 * 
 		 * // testTurn.Update();
-		 * 
-		 * UpdateMotors();
 		 */
+		shooter.PowerManual(0);
+		System.out.println(frontLeft.getSelectedSensorPosition());
+		driveTrain.SetBothSpeed(0);
+		driveTrain.SetCoast();
+		climber.coastMode();
+		intakeSeven.set(ControlMode.PercentOutput, 0f);
+		 UpdateMotors();
 	}
 
 	public void ControllerDrive() {
@@ -674,11 +672,11 @@ public class Robot extends TimedRobot {
 			// float horJoystick = TranslateController((float) driver.getRawAxis(2));
 			// float verJoystick = TranslateController((float) driver.getRawAxis(1));
 
-			float horJoystick = DriveScaleSelector((float) driver.getRawAxis(2), DriveScale.parabala);
-			float verJoystick = DriveScaleSelector((float) driver.getRawAxis(1), DriveScale.parabala);
+			//float horJoystick = DriveScaleSelector((float) driver.getRawAxis(2), DriveScale.parabala);
+			//float verJoystick = DriveScaleSelector((float) driver.getRawAxis(1), DriveScale.parabala);
 
-			driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
-			driveTrain.SetLeftSpeed(-verJoystick + horJoystick);
+			//driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
+			//driveTrain.SetLeftSpeed(-verJoystick + horJoystick);
 			// driveTrain.SetCoast();
 		} else {
 			// tank
@@ -694,8 +692,8 @@ public class Robot extends TimedRobot {
 
 			driveTrain.SetRightSpeed(-leftJoystick + -rightJoystick);
 			driveTrain.SetLeftSpeed(-leftJoystick + rightJoystick);
-			System.out.println("Right " + (-leftJoystick + -rightJoystick));
-			System.out.println("Left " + (-leftJoystick + rightJoystick));
+			//System.out.println("Right " + (-leftJoystick + -rightJoystick));
+			//System.out.println("Left " + (-leftJoystick + rightJoystick));
 			driveTrain.Update();
 
 			// driveTrain.SetRightSpeed(leftJoystick);
