@@ -241,7 +241,7 @@ public class Robot extends TimedRobot {
 		autoFourBallRed.add(new Wait(driveTrain, 0.3f));
 		// shoot
 		autoFourBallRed.add(new Shoot(shooter, indexer));
-		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 14f, 0.15f, 2.0f));// -speed 14.15c
+		autoFourBallRed.add(new NavxTurn(driveTrain, navx, 16f, 0.15f, 2.0f));// -speed 14.15c
 		// autoFourBall.add(new Wait(driveTrain, 0.5f));
 		autoFourBallRed.add(new EncoderForwardFeet(driveTrain, 11.5f, -0.8f));// 12
 		// autoFourBallRed.add(new NavxTurn(driveTrain, navx, -20f, 0.2f, 5f));// -speed
@@ -258,7 +258,7 @@ public class Robot extends TimedRobot {
 
 		// FourBallBlue
 		autoFourBallBlue = new LinkedList<AutoStep>();
-		autoFourBallBlue.add(new Print("blue ran"));
+		autoFourBallBlue.add(new Print("blue ran testing"));
 		autoFourBallBlue.add(new NavxReset(navx));
 		autoFourBallBlue.add(new IntakeDrop(intakeSolenoid, true));
 		autoFourBallBlue.add(new IntakeRun(intakeSeven, 0.8f));
