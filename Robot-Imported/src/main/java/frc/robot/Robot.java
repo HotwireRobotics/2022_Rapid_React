@@ -486,7 +486,7 @@ public class Robot extends TimedRobot {
 			if (!opToggle) {
 				SmartDashboard.putBoolean("Shooter running?", true);
 				shooter.Update();
-			} else {
+			} else if(!operator.getRawButton(5)){
 				SmartDashboard.putBoolean("Shooter running?", false);
 				preshooterpid.PowerManual(0);
 				shooter.PowerManual(0);

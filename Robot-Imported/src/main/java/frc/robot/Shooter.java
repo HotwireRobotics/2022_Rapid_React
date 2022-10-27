@@ -61,7 +61,7 @@ public class Shooter {
 
         float dist = Math.abs(farY - nearY);
         float distT = (float) limelight.gety() - 15.0f;
-        float distCurve = (1.546f * (distT * distT)) - (65.06f * distT) + 2286.0f + 50.0f;
+        float distCurve = (1.546f * (distT * distT)) - (65.06f * distT) + 2286.0f + 150.0f;
         float relDist = distCurve;
 
         // shooter
