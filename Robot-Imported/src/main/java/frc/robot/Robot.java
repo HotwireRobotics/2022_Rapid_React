@@ -104,12 +104,13 @@ public class Robot extends TimedRobot {
 	public SimpleMotorFeedforward preShooterFeed = new SimpleMotorFeedforward(0.48691, 0.11446, 0.015037);
 	public boolean indexToggle = true;
 	public boolean indexToggle2 = true;
+	public float pwrm = 1;
 
 	public int pov;
 	public boolean speedToggle = false;
 
 	// Joysticks
-	//public Joystick driver;
+	// public Joystick driver;
 	public Joystick operator;
 	public boolean arcadeDrive = false;
 	public Joystick flightStickLeft;
@@ -148,7 +149,7 @@ public class Robot extends TimedRobot {
 	public HotPID turnPID;
 
 	public enum DriveScale {
-		linear, parabala, tangent, inverse, cb, cbrt,
+		linear, squared, tangent, inverse, cb, cbrt,
 	}
 
 	public DriverStation driverStation;
@@ -192,7 +193,7 @@ public class Robot extends TimedRobot {
 
 		// Controllers
 		driveTrain.SetBreak();
-		//driver = new Joystick(0);
+		// driver = new Joystick(0);
 		operator = new Joystick(1);
 		flightStickLeft = new Joystick(3);
 		flightStickRight = new Joystick(2);
@@ -384,7 +385,7 @@ public class Robot extends TimedRobot {
 		driveTrain.SetCoast();
 
 		// Controllers
-		//driver = new Joystick(0);
+		// driver = new Joystick(0);
 		operator = new Joystick(1);
 		flightStickLeft = new Joystick(3);
 		flightStickRight = new Joystick(2);
@@ -398,8 +399,8 @@ public class Robot extends TimedRobot {
 
 		float multiplier = (ControllerInput / (float) Math.abs(ControllerInput));
 
-		if (selection == DriveScale.parabala) {
-			float output = multiplier * (float) Math.pow(ControllerInput, 2);
+		if (selection == DriveScale.squared) {
+			float output = multiplier * (float) (ControllerInput * ControllerInput);
 
 			if (flightStickLeft.getRawButtonPressed(1)) {
 				slow = !slow;
@@ -409,7 +410,9 @@ public class Robot extends TimedRobot {
 				output = output * 0.5f;
 			}
 
+			System.out.println(output + "meow");
 			return output;
+
 		} else if (selection == DriveScale.tangent) {
 			return multiplier * (0.4f * (float) Math.tan(1.8 * (multiplier * ControllerInput) - .9) + 0.5f);
 		} else if (selection == DriveScale.inverse) {
@@ -424,6 +427,13 @@ public class Robot extends TimedRobot {
 	}
 
 	public void teleopPeriodic() {
+
+ 		pwrm=12/(float)RobotController.getBatteryVoltage();
+		float rampTime = 0.0f;
+		frontLeft.configOpenloopRamp(rampTime);
+		backLeft.configOpenloopRamp(rampTime);
+		frontRight.configOpenloopRamp(rampTime);
+		backRight.configOpenloopRamp(rampTime);
 
 		if (indexToggle && indexer.firstBeam.get()) {
 			indexToggle = false;
@@ -486,7 +496,7 @@ public class Robot extends TimedRobot {
 			if (!opToggle) {
 				SmartDashboard.putBoolean("Shooter running?", true);
 				shooter.Update();
-			} else if(!operator.getRawButton(5)){
+			} else if (!operator.getRawButton(5)) {
 				SmartDashboard.putBoolean("Shooter running?", false);
 				preshooterpid.PowerManual(0);
 				shooter.PowerManual(0);
@@ -562,7 +572,7 @@ public class Robot extends TimedRobot {
 		// climber.coastMode();
 
 		// Controllers
-		//driver = new Joystick(0);
+		// driver = new Joystick(0);
 		operator = new Joystick(1);
 		flightStickLeft = new Joystick(3);
 		flightStickRight = new Joystick(2);
@@ -599,27 +609,24 @@ public class Robot extends TimedRobot {
 	 * - run intake backwards always, regardless of ball when trigger button is
 	 * pressed
 	 */
-	//DigitalInput beamTest = new DigitalInput(1);
+	// DigitalInput beamTest = new DigitalInput(1);
 
 	public void testPeriodic() {
 		/*
-		if(beamTest.get()){ 
-			if (flightStickLeft.getRawButton(2)) {
-				intakeSeven.set(ControlMode.PercentOutput, 0.5f);
-			} else if(flightStickLeft.getRawButton(1)) {
-				intakeSeven.set(ControlMode.PercentOutput, -0.5f);
-			} else {
-				intakeSeven.set(ControlMode.PercentOutput, 0f);
-			}
-
-		}
-		else {
-			intakeSeven.set(ControlMode.PercentOutput, 0f);
-		}
-		*/
-		
-
-	
+		 * if(beamTest.get()){
+		 * if (flightStickLeft.getRawButton(2)) {
+		 * intakeSeven.set(ControlMode.PercentOutput, 0.5f);
+		 * } else if(flightStickLeft.getRawButton(1)) {
+		 * intakeSeven.set(ControlMode.PercentOutput, -0.5f);
+		 * } else {
+		 * intakeSeven.set(ControlMode.PercentOutput, 0f);
+		 * }
+		 * 
+		 * }
+		 * else {
+		 * intakeSeven.set(ControlMode.PercentOutput, 0f);
+		 * }
+		 */
 
 		/*
 		 * frontLeft.getSelectedSensorPosition();
@@ -662,7 +669,7 @@ public class Robot extends TimedRobot {
 		driveTrain.SetCoast();
 		climber.coastMode();
 		intakeSeven.set(ControlMode.PercentOutput, 0f);
-		 UpdateMotors();
+		UpdateMotors();
 	}
 
 	public void ControllerDrive() {
@@ -672,11 +679,13 @@ public class Robot extends TimedRobot {
 			// float horJoystick = TranslateController((float) driver.getRawAxis(2));
 			// float verJoystick = TranslateController((float) driver.getRawAxis(1));
 
-			//float horJoystick = DriveScaleSelector((float) driver.getRawAxis(2), DriveScale.parabala);
-			//float verJoystick = DriveScaleSelector((float) driver.getRawAxis(1), DriveScale.parabala);
+			// float horJoystick = DriveScaleSelector((float) driver.getRawAxis(2),
+			// DriveScale.parabala);
+			// float verJoystick = DriveScaleSelector((float) driver.getRawAxis(1),
+			// DriveScale.parabala);
 
-			//driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
-			//driveTrain.SetLeftSpeed(-verJoystick + horJoystick);
+			// driveTrain.SetRightSpeed(-verJoystick + -horJoystick);
+			// driveTrain.SetLeftSpeed(-verJoystick + horJoystick);
 			// driveTrain.SetCoast();
 		} else {
 			// tank
@@ -692,8 +701,8 @@ public class Robot extends TimedRobot {
 
 			driveTrain.SetRightSpeed(-leftJoystick + -rightJoystick);
 			driveTrain.SetLeftSpeed(-leftJoystick + rightJoystick);
-			//System.out.println("Right " + (-leftJoystick + -rightJoystick));
-			//System.out.println("Left " + (-leftJoystick + rightJoystick));
+			// System.out.println("Right " + (-leftJoystick + -rightJoystick));
+			// System.out.println("Left " + (-leftJoystick + rightJoystick));
 			driveTrain.Update();
 
 			// driveTrain.SetRightSpeed(leftJoystick);

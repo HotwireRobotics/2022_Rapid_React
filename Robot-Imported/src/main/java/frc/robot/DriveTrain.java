@@ -13,7 +13,7 @@ public class DriveTrain {
 	JoshMotorControllor joshmotorcontrollorLeftBottomTwo;
 	JoshMotorControllor joshmotorcontrollorRightBottomOne;
 	JoshMotorControllor joshmotorcontrollorRightBottomTwo;
-	float lerpSpeed = 0.8f;
+	float lerpSpeed = 1.0f;
 	public AHRS navx;
 
 	public DriveTrain(int pwm1, int pwm2, int pwm3, int pwm4, AHRS navx) {
@@ -21,13 +21,13 @@ public class DriveTrain {
 		joshmotorcontrollorLeftBottomTwo = new JoshMotorControllor(pwm2, lerpSpeed);
 		joshmotorcontrollorRightBottomOne = new JoshMotorControllor(pwm3, lerpSpeed);
 		joshmotorcontrollorRightBottomTwo = new JoshMotorControllor(pwm4, lerpSpeed);
-		int limit = 80;
-		int threshold = 80;
+		int limit = 240;
+		int threshold = 240;
 		float time = 0.001f;
-		joshmotorcontrollorLeftBottomOne.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
-		joshmotorcontrollorLeftBottomTwo.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
-		joshmotorcontrollorRightBottomOne.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
-		joshmotorcontrollorRightBottomTwo.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, limit, threshold, time));
+		joshmotorcontrollorLeftBottomOne.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(false, limit, threshold, time));
+		joshmotorcontrollorLeftBottomTwo.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(false, limit, threshold, time));
+		joshmotorcontrollorRightBottomOne.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(false, limit, threshold, time));
+		joshmotorcontrollorRightBottomTwo.talon.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(false, limit, threshold, time));
 
 		this.navx = navx;
 	}
